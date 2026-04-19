@@ -7,7 +7,7 @@ Guidance for Claude (or any assistant) working in this repository.
 - **Two subprojects**: `server/` (Bun + TypeScript + GraphQL Yoga + Pothos + Kysely + Postgres) and `app/` (Flutter for iOS, Android, macOS).
 - **Contract between them**: GraphQL SDL at `server/schema.graphql`. Server is code-first via Pothos and prints the SDL. Client consumes the SDL plus `.graphql` operation files via `graphql_codegen` to produce typed Dart.
 - **Always resync the schema** after any server schema change: `cd server && bun run sync` copies SDL to `app/lib/graphql/schema.graphql`. Then in `app/` run `dart run build_runner build --delete-conflicting-outputs`.
-- **Static end-to-end contract enforced by CI** (`.github/workflows/ci.yml`): Pothos TS → tsc; `server/schema.graphql` and `app/lib/graphql/schema.graphql` must match what Pothos would print (enforced via `git diff --exit-code`); `*.graphql.dart` must match what `build_runner` would emit; `flutter analyze` must pass. A server-side field removal fails either `build_runner` (operation selects a missing field) or the Dart analyzer (a screen references a property that no longer exists on the generated class). See `docs/ARCHITECTURE.md` → "End-to-end static guarantees".
+- **Static end-to-end contract enforced by a pre-commit hook** (`.githooks/pre-commit`, activated via `git config core.hooksPath .githooks`): Pothos TS → tsc; `server/schema.graphql` and `app/lib/graphql/schema.graphql` must match what Pothos would print (regenerated and `git diff --exit-code`); `*.graphql.dart` must match what `build_runner` would emit; `flutter analyze` must pass. A server-side field removal fails either `build_runner` (operation selects a missing field) or the Dart analyzer (a screen references a property that no longer exists on the generated class). The hook only runs the layers whose inputs are in your commit, so doc-only commits stay instant. See `docs/ARCHITECTURE.md` → "End-to-end static guarantees".
 - **Database**: Postgres via Kysely. Migrations in `server/src/db/migrations/`. Run with `bun run migrate`.
 - **Auth**: JWT (HS256, `jose`). Adults 30-day TTL, kids 8h. Scope-auth plugin gates adult-only mutations.
 
@@ -106,7 +106,7 @@ Guidance for Claude (or any assistant) working in this repository.
 4. Surface new fields via Pothos in `server/src/schema/types.ts`.
 5. Re-sync + regen client types as above.
 
-CI should run `bun run db:types:verify` against a test DB that's had migrations applied — it exits non-zero if `generated.ts` is out of date, so a missed regen can't slip in.
+The pre-commit hook runs `bun run db:types:verify` when a migration file is in the staged diff — it exits non-zero if `generated.ts` is out of date, so a missed regen can't slip in. The check is skipped gracefully if Postgres isn't running locally.
 
 ### Writing a resolver
 

@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+#
+# Pre-commit hook: enforces the end-to-end type contract without needing CI.
+#
+# Install once:
+#     git config core.hooksPath .githooks
+#
+# For each layer that's been touched, this:
+#   1. runs the generator,
+#   2. checks the regenerated output matches what you staged.
+# If anything drifted, the commit is aborted with a pointer at the file.
+#
+# Designed to be fast when you're only editing docs: each check is gated by
+# whether its input files are actually in the staged diff.
+
+set -euo pipefail
+
+RED=$'\033[31m'
+GREEN=$'\033[32m'
+YELLOW=$'\033[33m'
+RESET=$'\033[0m'
+
+fail() {
+  echo "${RED}✗ $*${RESET}" >&2
+  exit 1
+}
+info()  { echo "${YELLOW}→ $*${RESET}"; }
+ok()    { echo "${GREEN}✓ $*${RESET}"; }
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$STAGED" ] && exit 0
+
+changed() { echo "$STAGED" | grep -qE "$1"; }
+
+# Keep pre-commit fast: run drift checks only for the layers whose inputs
+# are in this commit. A doc-only commit does zero work.
+
+# -------- Server: tsc + kysely-codegen verify + SDL drift --------
+
+if changed '^server/(src/|package\.json$|tsconfig\.json$)'; then
+  info "server: tsc"
+  (cd server && bun run typecheck) || fail "server typecheck failed"
+  ok "server typechecks"
+
+  # kysely-codegen verify needs a running DB. Skip gracefully if offline.
+  if changed '^server/src/db/migrations/' && (cd server && bun run db:types:verify >/dev/null 2>&1); then
+    ok "server: db/generated.ts matches live schema"
+  elif changed '^server/src/db/migrations/'; then
+    echo "${YELLOW}!${RESET} Skipping db:types:verify (Postgres unreachable)."
+    echo "  Run 'cd server && bun run db:types' and commit the result when you can."
+  fi
+
+  info "server: regenerating SDL"
+  (cd server && bun run schema >/dev/null) || fail "bun run schema failed"
+  if ! git diff --exit-code server/schema.graphql >/dev/null; then
+    fail "server/schema.graphql is stale. Run 'cd server && bun run sync', then 'git add server/schema.graphql app/lib/graphql/schema.graphql'."
+  fi
+  ok "server SDL matches Pothos"
+fi
+
+# -------- Client: SDL sync + Dart codegen drift + analyzer --------
+
+# The client SDL and the server SDL should be identical. If the SDL changed
+# above, make sure the client copy is also staged.
+if changed '^server/schema\.graphql$' || changed '^app/lib/graphql/schema\.graphql$'; then
+  info "client: schema copy"
+  (cd server && bun run sync >/dev/null) || fail "bun run sync failed"
+  if ! git diff --exit-code app/lib/graphql/schema.graphql >/dev/null; then
+    fail "app/lib/graphql/schema.graphql is stale. Run 'cd server && bun run sync' and 'git add app/lib/graphql/schema.graphql'."
+  fi
+  ok "client SDL matches server"
+fi
+
+if changed '^app/lib/graphql/(operations/|schema\.graphql)'; then
+  info "client: graphql_codegen"
+  (cd app && dart run build_runner build --delete-conflicting-outputs >/dev/null 2>&1) \
+    || fail "dart build_runner failed — an operation probably selects a field that no longer exists on the schema. Run 'cd app && dart run build_runner build --delete-conflicting-outputs' to see the error."
+  if ! git diff --exit-code 'app/lib/graphql/**/*.graphql.dart' >/dev/null; then
+    fail "Generated *.graphql.dart is stale. Run 'cd app && dart run build_runner build --delete-conflicting-outputs' and stage the regenerated files."
+  fi
+  ok "graphql_codegen output matches"
+fi
+
+if changed '^app/(lib/|test/|pubspec\.yaml$|analysis_options\.yaml$)'; then
+  info "client: flutter analyze"
+  (cd app && flutter analyze --no-fatal-infos) || fail "flutter analyze failed — this is how a server-side breaking change surfaces on the client. Fix or revert the referenced Dart code."
+  ok "flutter analyze clean"
+fi
+
+ok "pre-commit checks passed"

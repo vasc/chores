@@ -95,6 +95,20 @@ dart run build_runner build --delete-conflicting-outputs
 flutter run -d macos     # or -d ios / -d android
 ```
 
+### 5. Enable the pre-commit hook
+
+Once per clone. Activates the static end-to-end contract check described
+in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md#end-to-end-static-guarantees):
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The hook runs only the layers touched by your staged diff (typecheck,
+schema drift, Dart codegen drift, `flutter analyze`), so doc-only commits
+stay instant. If any layer is out of date, the commit is rejected with a
+pointer at the exact regen command.
+
 The app defaults to `http://localhost:4000/graphql`. Override with:
 
 ```bash

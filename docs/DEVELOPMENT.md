@@ -110,9 +110,15 @@ Commit these together with the source change:
 - `app/lib/graphql/schema.graphql` (copy of the above)
 - `app/lib/graphql/operations/*.graphql.dart` (regenerated Dart)
 
-CI (`.github/workflows/ci.yml`) re-runs every generator and fails the
-build if any of these artifacts is out of date. If you forget to commit
-one, the CI log points at exactly which file needs regenerating.
+The pre-commit hook (`.githooks/pre-commit`) re-runs every generator and
+rejects the commit if any of these artifacts is out of date. If you
+forget one, the hook points at exactly which file needs regenerating.
+
+Enable the hook once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
 
 ### Why this is end-to-end statically safe
 

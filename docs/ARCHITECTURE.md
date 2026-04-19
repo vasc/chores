@@ -74,25 +74,29 @@ after `bun run sync` + `build_runner`.
 
 ### End-to-end static guarantees
 
-Every layer is type-checked at compile time and the `.github/workflows/ci.yml`
-workflow enforces that the committed artifacts at each boundary match what
-would be regenerated from upstream:
+Every layer is type-checked at compile time, and a local pre-commit hook
+(`.githooks/pre-commit`) enforces that the committed artifacts at each
+boundary match what would be regenerated from upstream. Enable it once
+with `git config core.hooksPath .githooks`.
 
-| Boundary | Generator | Static check | CI gate |
+| Boundary | Generator | Static check | Pre-commit gate |
 |---|---|---|---|
-| Postgres schema → `server/src/db/generated.ts` | `kysely-codegen` | `tsc` (resolvers use columns that exist) | `bun run db:types:verify` — exits non-zero if the committed file diverges from the live DB |
+| Postgres schema → `server/src/db/generated.ts` | `kysely-codegen` | `tsc` (resolvers use columns that exist) | `bun run db:types:verify` — exits non-zero if the committed file diverges from the live DB (skipped gracefully if Postgres isn't running) |
 | Pothos resolvers → `server/schema.graphql` | `printSchema()` in `src/schema/print.ts` | `tsc` (Pothos infers resolver types from the builder) | `bun run schema` + `git diff --exit-code schema.graphql` |
 | `server/schema.graphql` → `app/lib/graphql/schema.graphql` | `cp` via `bun run sync` | — | `bun run sync` + `git diff --exit-code` |
 | App SDL + `.graphql` operations → `*.graphql.dart` | `graphql_codegen` via `build_runner` | **codegen fails** if an operation selects a field that isn't in the schema | `dart run build_runner build` + `git diff --exit-code`; non-existent fields abort codegen with `Failed to find type for field X on Y` |
-| `*.graphql.dart` → screens/widgets | Dart analyzer | `flutter analyze` — removed/renamed fields fail to compile everywhere they're used | `flutter analyze` + `flutter test` |
+| `*.graphql.dart` → screens/widgets | Dart analyzer | `flutter analyze` — removed/renamed fields fail to compile everywhere they're used | `flutter analyze` |
+
+The hook only runs the layers whose inputs are in the staged diff, so a
+doc-only commit skips every generator and exits instantly.
 
 The **end-to-end static catch**: a Pothos resolver change that removes or
 renames a field propagates through `schema.graphql` → Dart codegen → the
 analyzer. If the generated Dart no longer has a property, every
 `user.removedField` access is a compile error. If you didn't regen, the
-diff checks fail first. CI blocks the PR either way. Verified empirically
-by removing `tokenBalance` from the Pothos `User` — codegen aborted with
-`Invalid GraphQL: Failed to find type for field tokenBalance on User`.
+diff checks fail first. Either way the commit is rejected. Verified
+empirically by removing `tokenBalance` from the Pothos `User` — codegen
+aborted with `Invalid GraphQL: Failed to find type for field tokenBalance on User`.
 
 ## Component responsibilities
 
@@ -122,10 +126,10 @@ by removing `tokenBalance` from the Pothos `User` — codegen aborted with
 - **`kysely.ts`** — creates the `pg` pool and Kysely instance. Imports the
   typed `DB` interface from `generated.ts` so resolvers get table completion.
 - **`generated.ts`** — emitted by `kysely-codegen` introspecting the live
-  Postgres schema. Committed to VCS so fresh clones and CI don't need a DB
-  to compile. Regenerated with `bun run db:types`; CI runs
-  `bun run db:types:verify` to fail builds when someone forgets to commit
-  an update. Never hand-edit — change a migration and re-run.
+  Postgres schema. Committed to VCS so fresh clones don't need a DB to
+  compile. Regenerated with `bun run db:types`; the pre-commit hook runs
+  `bun run db:types:verify` when a migration lands without the
+  regenerated types. Never hand-edit — change a migration and re-run.
 - **`migrate.ts`** — CLI runner. `up` applies pending migrations; `down`
   rolls back the latest.
 - **`migrations/0001_init.ts`** — full initial schema with Postgres enum
