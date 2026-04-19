@@ -5,6 +5,8 @@
 
 import type { ColumnType } from "kysely";
 
+export type ChoreKind = "on_demand" | "scheduled";
+
 export type ChoreStatus = "approved" | "pending" | "rejected" | "submitted";
 
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
@@ -34,11 +36,13 @@ export interface ChoreAssignments {
 
 export interface Chores {
   archived: Generated<boolean>;
+  cooldown_minutes: Generated<number>;
   created_at: Generated<Timestamp>;
   created_by_user_id: string;
   description: string | null;
   household_id: string;
   id: Generated<string>;
+  kind: Generated<ChoreKind>;
   recurrence: Generated<RecurrenceType>;
   title: string;
   token_value: number;

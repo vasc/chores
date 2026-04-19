@@ -2,14 +2,22 @@ mutation CreateChore(
   $title: String!
   $description: String
   $tokenValue: Int!
+  $kind: ChoreKind = scheduled
   $recurrence: Recurrence = one_off
+  $cooldownMinutes: Int = 0
 ) {
   createChore(
     title: $title
     description: $description
     tokenValue: $tokenValue
+    kind: $kind
     recurrence: $recurrence
+    cooldownMinutes: $cooldownMinutes
   ) { ...ChoreFields }
+}
+
+mutation ClaimChore($choreId: UUID!) {
+  claimChore(choreId: $choreId) { ...AssignmentFields }
 }
 
 mutation ArchiveChore($id: UUID!) {

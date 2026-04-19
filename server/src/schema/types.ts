@@ -9,6 +9,7 @@ import type {
   Users,
 } from "../db/generated.ts";
 import {
+  ChoreKindEnum,
   ChoreStatusEnum,
   RecurrenceEnum,
   RedemptionStatusEnum,
@@ -49,7 +50,9 @@ export const ChoreRef = builder.objectRef<ChoreRow>("Chore").implement({
     title: t.exposeString("title"),
     description: t.exposeString("description", { nullable: true }),
     tokenValue: t.exposeInt("token_value"),
+    kind: t.field({ type: ChoreKindEnum, resolve: (c) => c.kind }),
     recurrence: t.field({ type: RecurrenceEnum, resolve: (c) => c.recurrence }),
+    cooldownMinutes: t.exposeInt("cooldown_minutes"),
     archived: t.exposeBoolean("archived"),
     createdAt: t.field({ type: "DateTime", resolve: (c) => c.created_at }),
     createdBy: t.field({

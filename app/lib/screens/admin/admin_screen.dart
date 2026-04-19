@@ -11,6 +11,18 @@ import '../../graphql/operations/rewards.graphql.dart';
 import '../../graphql/schema.graphql.dart';
 import '../../widgets/error_box.dart';
 
+String _choreSubtitle(Fragment$ChoreFields c) {
+  final parts = <String>['${c.tokenValue} 🪙'];
+  if (c.kind == Enum$ChoreKind.on_demand) {
+    parts.add('on-demand');
+  } else {
+    parts.add(c.recurrence.name);
+  }
+  if (c.cooldownMinutes > 0) parts.add('cooldown ${c.cooldownMinutes}m');
+  if (c.archived) parts.add('archived');
+  return parts.join(' · ');
+}
+
 class AdminScreen extends ConsumerWidget {
   const AdminScreen({super.key});
 
@@ -97,7 +109,7 @@ class _ChoreAdminTile extends ConsumerWidget {
         children: [
           ListTile(
             title: Text(chore.title),
-            subtitle: Text('${chore.tokenValue} 🪙 · ${chore.recurrence.name}'),
+            subtitle: Text(_choreSubtitle(chore)),
             trailing: IconButton(
               icon: const Icon(Icons.archive_outlined),
               tooltip: 'Archive',
@@ -144,6 +156,8 @@ class _ChoreFormState extends ConsumerState<_ChoreForm> {
   final _title = TextEditingController();
   final _desc = TextEditingController();
   final _tokens = TextEditingController(text: '5');
+  final _cooldown = TextEditingController(text: '0');
+  Enum$ChoreKind _kind = Enum$ChoreKind.scheduled;
   Enum$Recurrence _recurrence = Enum$Recurrence.one_off;
   bool _busy = false;
   String? _error;
@@ -160,7 +174,11 @@ class _ChoreFormState extends ConsumerState<_ChoreForm> {
             title: _title.text.trim(),
             description: _desc.text.trim().isEmpty ? null : _desc.text.trim(),
             tokenValue: int.parse(_tokens.text),
-            recurrence: _recurrence,
+            kind: _kind,
+            recurrence: _kind == Enum$ChoreKind.on_demand
+                ? Enum$Recurrence.one_off
+                : _recurrence,
+            cooldownMinutes: int.tryParse(_cooldown.text) ?? 0,
           ).toJson(),
         ));
     if (!mounted) return;
@@ -206,15 +224,45 @@ class _ChoreFormState extends ConsumerState<_ChoreForm> {
               validator: (v) => int.tryParse(v ?? '') == null ? 'Number' : null,
             ),
             const SizedBox(height: 8),
-            DropdownButtonFormField<Enum$Recurrence>(
-              value: _recurrence,
-              decoration: const InputDecoration(labelText: 'Recurrence'),
+            DropdownButtonFormField<Enum$ChoreKind>(
+              value: _kind,
+              decoration: const InputDecoration(labelText: 'Kind'),
               items: const [
-                DropdownMenuItem(value: Enum$Recurrence.one_off, child: Text('One-off')),
-                DropdownMenuItem(value: Enum$Recurrence.daily, child: Text('Daily')),
-                DropdownMenuItem(value: Enum$Recurrence.weekly, child: Text('Weekly')),
+                DropdownMenuItem(
+                  value: Enum$ChoreKind.scheduled,
+                  child: Text('Scheduled (you assign it)'),
+                ),
+                DropdownMenuItem(
+                  value: Enum$ChoreKind.on_demand,
+                  child: Text('On-demand (kid claims it)'),
+                ),
               ],
-              onChanged: (v) => setState(() => _recurrence = v!),
+              onChanged: (v) => setState(() => _kind = v!),
+            ),
+            if (_kind == Enum$ChoreKind.scheduled) ...[
+              const SizedBox(height: 8),
+              DropdownButtonFormField<Enum$Recurrence>(
+                value: _recurrence,
+                decoration: const InputDecoration(labelText: 'Recurrence'),
+                items: const [
+                  DropdownMenuItem(value: Enum$Recurrence.one_off, child: Text('One-off')),
+                  DropdownMenuItem(value: Enum$Recurrence.daily, child: Text('Daily')),
+                  DropdownMenuItem(value: Enum$Recurrence.weekly, child: Text('Weekly')),
+                ],
+                onChanged: (v) => setState(() => _recurrence = v!),
+              ),
+            ],
+            TextFormField(
+              controller: _cooldown,
+              decoration: const InputDecoration(
+                labelText: 'Cooldown (minutes; 0 = none)',
+              ),
+              keyboardType: TextInputType.number,
+              validator: (v) {
+                final n = int.tryParse(v ?? '');
+                if (n == null || n < 0) return 'Number ≥ 0';
+                return null;
+              },
             ),
             const SizedBox(height: 16),
             SizedBox(

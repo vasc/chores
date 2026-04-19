@@ -5,10 +5,12 @@ type AuthPayload {
 
 type Chore {
   archived: Boolean!
+  cooldownMinutes: Int!
   createdAt: DateTime!
   createdBy: User!
   description: String
   id: ID!
+  kind: ChoreKind!
   recurrence: Recurrence!
   title: String!
   tokenValue: Int!
@@ -24,6 +26,11 @@ type ChoreAssignment {
   rejectReason: String
   status: ChoreStatus!
   submittedAt: DateTime
+}
+
+enum ChoreKind {
+  on_demand
+  scheduled
 }
 
 enum ChoreStatus {
@@ -52,7 +59,8 @@ type Mutation {
   archiveChore(id: UUID!): Chore!
   archiveReward(id: UUID!): Reward!
   assignChore(assignedToUserId: UUID!, choreId: UUID!, dueDate: DateTime): ChoreAssignment!
-  createChore(description: String, recurrence: Recurrence = one_off, title: String!, tokenValue: Int!): Chore!
+  claimChore(choreId: UUID!): ChoreAssignment!
+  createChore(cooldownMinutes: Int = 0, description: String, kind: ChoreKind = scheduled, recurrence: Recurrence = one_off, title: String!, tokenValue: Int!): Chore!
   createReward(description: String, title: String!, tokenCost: Int!): Reward!
   denyRedemption(id: UUID!, reason: String): Redemption!
   fulfillRedemption(id: UUID!): Redemption!
@@ -63,7 +71,7 @@ type Mutation {
   signUpHousehold(adultName: String!, email: String!, householdName: String!, password: String!): AuthPayload!
   submitChore(assignmentId: UUID!): ChoreAssignment!
   updateChildPin(newPin: String!, userId: UUID!): User!
-  updateChore(description: String, id: UUID!, recurrence: Recurrence, title: String, tokenValue: Int): Chore!
+  updateChore(cooldownMinutes: Int, description: String, id: UUID!, kind: ChoreKind, recurrence: Recurrence, title: String, tokenValue: Int): Chore!
   updateReward(description: String, id: UUID!, title: String, tokenCost: Int): Reward!
 }
 

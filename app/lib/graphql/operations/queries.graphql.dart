@@ -2669,3 +2669,263 @@ const documentNodeQueryLeaderboard = DocumentNode(definitions: [
   ),
   fragmentDefinitionUserFields,
 ]);
+
+class Query$Home {
+  Query$Home({
+    required this.assignments,
+    required this.chores,
+    this.$__typename = 'Query',
+  });
+
+  factory Query$Home.fromJson(Map<String, dynamic> json) {
+    final l$assignments = json['assignments'];
+    final l$chores = json['chores'];
+    final l$$__typename = json['__typename'];
+    return Query$Home(
+      assignments: (l$assignments as List<dynamic>)
+          .map((e) =>
+              Fragment$AssignmentFields.fromJson((e as Map<String, dynamic>)))
+          .toList(),
+      chores: (l$chores as List<dynamic>)
+          .map(
+              (e) => Fragment$ChoreFields.fromJson((e as Map<String, dynamic>)))
+          .toList(),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final List<Fragment$AssignmentFields> assignments;
+
+  final List<Fragment$ChoreFields> chores;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$assignments = assignments;
+    _resultData['assignments'] = l$assignments.map((e) => e.toJson()).toList();
+    final l$chores = chores;
+    _resultData['chores'] = l$chores.map((e) => e.toJson()).toList();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$assignments = assignments;
+    final l$chores = chores;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      Object.hashAll(l$assignments.map((v) => v)),
+      Object.hashAll(l$chores.map((v) => v)),
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Query$Home) || runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$assignments = assignments;
+    final lOther$assignments = other.assignments;
+    if (l$assignments.length != lOther$assignments.length) {
+      return false;
+    }
+    for (int i = 0; i < l$assignments.length; i++) {
+      final l$assignments$entry = l$assignments[i];
+      final lOther$assignments$entry = lOther$assignments[i];
+      if (l$assignments$entry != lOther$assignments$entry) {
+        return false;
+      }
+    }
+    final l$chores = chores;
+    final lOther$chores = other.chores;
+    if (l$chores.length != lOther$chores.length) {
+      return false;
+    }
+    for (int i = 0; i < l$chores.length; i++) {
+      final l$chores$entry = l$chores[i];
+      final lOther$chores$entry = lOther$chores[i];
+      if (l$chores$entry != lOther$chores$entry) {
+        return false;
+      }
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$Home on Query$Home {
+  CopyWith$Query$Home<Query$Home> get copyWith => CopyWith$Query$Home(
+        this,
+        (i) => i,
+      );
+}
+
+abstract class CopyWith$Query$Home<TRes> {
+  factory CopyWith$Query$Home(
+    Query$Home instance,
+    TRes Function(Query$Home) then,
+  ) = _CopyWithImpl$Query$Home;
+
+  factory CopyWith$Query$Home.stub(TRes res) = _CopyWithStubImpl$Query$Home;
+
+  TRes call({
+    List<Fragment$AssignmentFields>? assignments,
+    List<Fragment$ChoreFields>? chores,
+    String? $__typename,
+  });
+  TRes assignments(
+      Iterable<Fragment$AssignmentFields> Function(
+              Iterable<
+                  CopyWith$Fragment$AssignmentFields<
+                      Fragment$AssignmentFields>>)
+          _fn);
+  TRes chores(
+      Iterable<Fragment$ChoreFields> Function(
+              Iterable<CopyWith$Fragment$ChoreFields<Fragment$ChoreFields>>)
+          _fn);
+}
+
+class _CopyWithImpl$Query$Home<TRes> implements CopyWith$Query$Home<TRes> {
+  _CopyWithImpl$Query$Home(
+    this._instance,
+    this._then,
+  );
+
+  final Query$Home _instance;
+
+  final TRes Function(Query$Home) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? assignments = _undefined,
+    Object? chores = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Query$Home(
+        assignments: assignments == _undefined || assignments == null
+            ? _instance.assignments
+            : (assignments as List<Fragment$AssignmentFields>),
+        chores: chores == _undefined || chores == null
+            ? _instance.chores
+            : (chores as List<Fragment$ChoreFields>),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+
+  TRes assignments(
+          Iterable<Fragment$AssignmentFields> Function(
+                  Iterable<
+                      CopyWith$Fragment$AssignmentFields<
+                          Fragment$AssignmentFields>>)
+              _fn) =>
+      call(
+          assignments: _fn(_instance.assignments
+              .map((e) => CopyWith$Fragment$AssignmentFields(
+                    e,
+                    (i) => i,
+                  ))).toList());
+
+  TRes chores(
+          Iterable<Fragment$ChoreFields> Function(
+                  Iterable<CopyWith$Fragment$ChoreFields<Fragment$ChoreFields>>)
+              _fn) =>
+      call(
+          chores: _fn(_instance.chores.map((e) => CopyWith$Fragment$ChoreFields(
+                e,
+                (i) => i,
+              ))).toList());
+}
+
+class _CopyWithStubImpl$Query$Home<TRes> implements CopyWith$Query$Home<TRes> {
+  _CopyWithStubImpl$Query$Home(this._res);
+
+  TRes _res;
+
+  call({
+    List<Fragment$AssignmentFields>? assignments,
+    List<Fragment$ChoreFields>? chores,
+    String? $__typename,
+  }) =>
+      _res;
+
+  assignments(_fn) => _res;
+
+  chores(_fn) => _res;
+}
+
+const documentNodeQueryHome = DocumentNode(definitions: [
+  OperationDefinitionNode(
+    type: OperationType.query,
+    name: NameNode(value: 'Home'),
+    variableDefinitions: [],
+    directives: [],
+    selectionSet: SelectionSetNode(selections: [
+      FieldNode(
+        name: NameNode(value: 'assignments'),
+        alias: null,
+        arguments: [
+          ArgumentNode(
+            name: NameNode(value: 'mineOnly'),
+            value: BooleanValueNode(value: true),
+          )
+        ],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FragmentSpreadNode(
+            name: NameNode(value: 'AssignmentFields'),
+            directives: [],
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
+      ),
+      FieldNode(
+        name: NameNode(value: 'chores'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FragmentSpreadNode(
+            name: NameNode(value: 'ChoreFields'),
+            directives: [],
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
+      ),
+      FieldNode(
+        name: NameNode(value: '__typename'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+    ]),
+  ),
+  fragmentDefinitionAssignmentFields,
+  fragmentDefinitionChoreFields,
+  fragmentDefinitionUserFields,
+]);

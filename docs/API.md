@@ -20,6 +20,7 @@ The canonical SDL is in [`server/schema.graphql`](../server/schema.graphql).
 | Enum | Values |
 |---|---|
 | `Role` | `adult`, `child` |
+| `ChoreKind` | `scheduled`, `on_demand` |
 | `Recurrence` | `one_off`, `daily`, `weekly` |
 | `ChoreStatus` | `pending`, `submitted`, `approved`, `rejected` |
 | `RedemptionStatus` | `requested`, `approved`, `denied`, `fulfilled` |
@@ -49,7 +50,9 @@ type Chore {
   title: String!
   description: String
   tokenValue: Int!
-  recurrence: Recurrence!
+  kind: ChoreKind!         # scheduled (adult assigns) or on_demand (kid claims)
+  recurrence: Recurrence!  # only meaningful when kind == scheduled
+  cooldownMinutes: Int!    # min minutes between approvals for the same chore+user
   archived: Boolean!
   createdBy: User!
   createdAt: DateTime!
@@ -210,11 +213,14 @@ Reset a kid's PIN.
 
 ### Chores
 
-#### `createChore(title, description?, tokenValue, recurrence = one_off): Chore!`  *(adult only)*
+#### `createChore(title, description?, tokenValue, kind = scheduled, recurrence = one_off, cooldownMinutes = 0): Chore!`  *(adult only)*
 
-Create a chore template.
+Create a chore template. `kind = on_demand` makes it claimable by kids
+without prior assignment; `recurrence` is ignored in that case (no
+auto-spawn). `cooldownMinutes` enforces a minimum gap between approved
+claims of the same chore by the same user.
 
-#### `updateChore(id, title?, description?, tokenValue?, recurrence?): Chore!`  *(adult only)*
+#### `updateChore(id, title?, description?, tokenValue?, kind?, recurrence?, cooldownMinutes?): Chore!`  *(adult only)*
 
 Update a chore template.
 
@@ -237,7 +243,20 @@ Kid marks their assignment as done. Transitions `pending → submitted`
 Approve a submission. Transitions `submitted → approved` (also accepts
 `pending → approved` for direct credit). Credits
 `chore.tokenValue` to the kid's balance inside a transaction. If the
-chore is `daily`/`weekly`, automatically schedules the next assignment.
+chore is **scheduled** with `daily`/`weekly` recurrence, automatically
+schedules the next assignment. On-demand chores never auto-spawn — the
+kid claims again, gated by `cooldownMinutes`.
+
+#### `claimChore(choreId): ChoreAssignment!`  *(authenticated)*
+
+Self-claim an on-demand chore. Creates a `submitted` assignment for the
+caller. Errors with a clear message if:
+- the chore isn't `kind: on_demand`,
+- the caller already has an open (non-finalized) claim on this chore,
+- the chore is on cooldown for this user (last approved claim was within
+  `cooldownMinutes` ago — error includes the remaining minutes).
+
+An adult still needs to `approveChore` before tokens are credited.
 
 #### `rejectChore(assignmentId, reason?): ChoreAssignment!`  *(adult only)*
 

@@ -38,3 +38,8 @@ query PendingApprovals {
 query Leaderboard {
   leaderboard { ...UserFields }
 }
+
+query Home {
+  assignments(mineOnly: true) { ...AssignmentFields }
+  chores { ...ChoreFields }
+}

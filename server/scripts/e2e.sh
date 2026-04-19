@@ -82,5 +82,37 @@ echo "  balance: $BAL2 ✓"
 echo "13. fulfillRedemption"
 gql "mutation { fulfillRedemption(id:\"$REDEEM_ID\") { id status } }" "$ADULT_TOKEN" | jq -c '.data.fulfillRedemption'
 
+echo "14. on-demand chore: createChore kind=on_demand cooldownMinutes=60"
+ONDEMAND=$(gql "mutation { createChore(title:\"Set table\", tokenValue:2, kind:on_demand, cooldownMinutes:60) { id kind cooldownMinutes } }" "$ADULT_TOKEN")
+ONDEMAND_ID=$(echo "$ONDEMAND" | jq -r '.data.createChore.id')
+echo "  $(echo "$ONDEMAND" | jq -c .data.createChore)"
+
+echo "15. claimChore (kid → submitted)"
+CLAIM=$(gql "mutation { claimChore(choreId:\"$ONDEMAND_ID\") { id status } }" "$CHILD_TOKEN")
+CLAIM_ID=$(echo "$CLAIM" | jq -r '.data.claimChore.id')
+[ "$(echo "$CLAIM" | jq -r '.data.claimChore.status')" = "submitted" ] || { echo "❌ expected submitted"; exit 1; }
+echo "  $(echo "$CLAIM" | jq -c .data.claimChore)"
+
+echo "16. double-claim → open-claim error"
+ERR=$(gql "mutation { claimChore(choreId:\"$ONDEMAND_ID\") { id } }" "$CHILD_TOKEN" | jq -r '.errors[0].message')
+[[ "$ERR" == *"open claim"* ]] || { echo "❌ expected open-claim error, got: $ERR"; exit 1; }
+echo "  $ERR ✓"
+
+echo "17. approveChore on the claim → kid balance += 2"
+gql "mutation { approveChore(assignmentId:\"$CLAIM_ID\") { status } }" "$ADULT_TOKEN" | jq -c .data.approveChore
+BAL3=$(gql 'query { me { tokenBalance } }' "$CHILD_TOKEN" | jq -r '.data.me.tokenBalance')
+[ "$BAL3" = "2" ] || { echo "❌ expected balance 2, got $BAL3"; exit 1; }
+echo "  balance: $BAL3 ✓"
+
+echo "18. claim again immediately → cooldown error"
+ERR=$(gql "mutation { claimChore(choreId:\"$ONDEMAND_ID\") { id } }" "$CHILD_TOKEN" | jq -r '.errors[0].message')
+[[ "$ERR" == *"cooldown"* ]] || { echo "❌ expected cooldown error, got: $ERR"; exit 1; }
+echo "  $ERR ✓"
+
+echo "19. claim a scheduled chore → adult-only error"
+ERR=$(gql "mutation { claimChore(choreId:\"$CHORE_ID\") { id } }" "$CHILD_TOKEN" | jq -r '.errors[0].message')
+[[ "$ERR" == *"adult"* ]] || { echo "❌ expected adult-required error, got: $ERR"; exit 1; }
+echo "  $ERR ✓"
+
 echo
 echo "✅ all green"

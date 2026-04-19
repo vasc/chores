@@ -5,9 +5,11 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../auth/auth_controller.dart';
+import '../graphql/operations/chores.graphql.dart';
 import '../graphql/operations/fragments.graphql.dart';
 import '../graphql/operations/queries.graphql.dart';
 import '../graphql/schema.graphql.dart';
+import '../widgets/error_box.dart';
 
 class HomeChoresScreen extends ConsumerWidget {
   const HomeChoresScreen({super.key});
@@ -69,7 +71,7 @@ class HomeChoresScreen extends ConsumerWidget {
       ),
       body: Query(
         options: QueryOptions(
-          document: documentNodeQueryAssignments,
+          document: documentNodeQueryHome,
           fetchPolicy: FetchPolicy.cacheAndNetwork,
         ),
         builder: (result, {refetch, fetchMore}) {
@@ -79,9 +81,16 @@ class HomeChoresScreen extends ConsumerWidget {
           if (result.hasException) {
             return Center(child: Text(result.exception!.toString()));
           }
-          final parsed = Query$Assignments.fromJson(result.data!);
+          final parsed = Query$Home.fromJson(result.data!);
           final assignments = parsed.assignments;
-          if (assignments.isEmpty) {
+          // On-demand chores the kid can claim right now (server enforces the
+          // cooldown on submit; we just hide archived ones here).
+          final claimable = parsed.chores
+              .where((c) =>
+                  c.kind == Enum$ChoreKind.on_demand && !c.archived)
+              .toList();
+
+          if (assignments.isEmpty && claimable.isEmpty) {
             return RefreshIndicator(
               onRefresh: () async => refetch?.call(),
               child: ListView(
@@ -94,10 +103,19 @@ class HomeChoresScreen extends ConsumerWidget {
           }
           return RefreshIndicator(
             onRefresh: () async => refetch?.call(),
-            child: ListView.builder(
+            child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: assignments.length,
-              itemBuilder: (_, i) => _AssignmentTile(a: assignments[i]),
+              children: [
+                if (assignments.isNotEmpty) ...[
+                  const _SectionHeader('Assigned to you'),
+                  for (final a in assignments) _AssignmentTile(a: a),
+                ],
+                if (claimable.isNotEmpty) ...[
+                  const _SectionHeader('Claim a chore'),
+                  for (final c in claimable)
+                    _ClaimableTile(chore: c, onClaimed: () => refetch?.call()),
+                ],
+              ],
             ),
           );
         },
@@ -135,6 +153,80 @@ class _AssignmentTile extends StatelessWidget {
         ),
         isThreeLine: a.dueDate != null,
         trailing: _StatusChip(status: a.status, color: color),
+      ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader(this.label);
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+        child: Text(
+          label,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+      );
+}
+
+class _ClaimableTile extends ConsumerStatefulWidget {
+  const _ClaimableTile({required this.chore, required this.onClaimed});
+  final Fragment$ChoreFields chore;
+  final VoidCallback onClaimed;
+
+  @override
+  ConsumerState<_ClaimableTile> createState() => _ClaimableTileState();
+}
+
+class _ClaimableTileState extends ConsumerState<_ClaimableTile> {
+  bool _busy = false;
+
+  Future<void> _claim() async {
+    setState(() => _busy = true);
+    final result = await GraphQLProvider.of(context).value.mutate(
+          MutationOptions(
+            document: documentNodeMutationClaimChore,
+            variables: Variables$Mutation$ClaimChore(choreId: widget.chore.id)
+                .toJson(),
+          ),
+        );
+    if (!mounted) return;
+    setState(() => _busy = false);
+    if (result.hasException) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(prettifyError(result.exception!))),
+      );
+      return;
+    }
+    widget.onClaimed();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cooldownLabel = widget.chore.cooldownMinutes > 0
+        ? ' · cooldown ${widget.chore.cooldownMinutes}m'
+        : '';
+    return Card(
+      child: ListTile(
+        title: Text(widget.chore.title),
+        subtitle: Text(
+          '${widget.chore.tokenValue} 🪙$cooldownLabel'
+          '${widget.chore.description != null ? '\n${widget.chore.description}' : ''}',
+        ),
+        isThreeLine: widget.chore.description != null,
+        trailing: FilledButton.tonal(
+          onPressed: _busy ? null : _claim,
+          child: _busy
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Text('Claim'),
+        ),
       ),
     );
   }

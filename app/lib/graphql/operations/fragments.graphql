@@ -13,7 +13,9 @@ fragment ChoreFields on Chore {
   title
   description
   tokenValue
+  kind
   recurrence
+  cooldownMinutes
   archived
   createdAt
 }

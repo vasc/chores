@@ -2,7 +2,7 @@ import { z } from "zod";
 import { builder } from "./builder.ts";
 import { requireAdult, requireViewer } from "../context.ts";
 import { ChoreAssignmentRef, ChoreRef } from "./types.ts";
-import { RecurrenceEnum } from "./enums.ts";
+import { ChoreKindEnum, RecurrenceEnum } from "./enums.ts";
 
 const titleSchema = z.string().trim().min(1).max(120);
 
@@ -14,12 +14,16 @@ builder.mutationField("createChore", (t) =>
       title: t.arg.string({ required: true }),
       description: t.arg.string(),
       tokenValue: t.arg.int({ required: true }),
+      kind: t.arg({ type: ChoreKindEnum, defaultValue: "scheduled" }),
       recurrence: t.arg({ type: RecurrenceEnum, defaultValue: "one_off" }),
+      cooldownMinutes: t.arg.int({ defaultValue: 0 }),
     },
     resolve: async (_root, args, ctx) => {
       const v = requireAdult(ctx);
       const title = titleSchema.parse(args.title);
       if (args.tokenValue < 0) throw new Error("tokenValue must be ≥ 0");
+      const cooldown = args.cooldownMinutes ?? 0;
+      if (cooldown < 0) throw new Error("cooldownMinutes must be ≥ 0");
       return ctx.db
         .insertInto("chores")
         .values({
@@ -27,7 +31,9 @@ builder.mutationField("createChore", (t) =>
           title,
           description: args.description ?? null,
           token_value: args.tokenValue,
+          kind: args.kind ?? "scheduled",
           recurrence: args.recurrence ?? "one_off",
+          cooldown_minutes: cooldown,
           created_by_user_id: v.userId,
         })
         .returningAll()
@@ -45,7 +51,9 @@ builder.mutationField("updateChore", (t) =>
       title: t.arg.string(),
       description: t.arg.string(),
       tokenValue: t.arg.int(),
+      kind: t.arg({ type: ChoreKindEnum }),
       recurrence: t.arg({ type: RecurrenceEnum }),
+      cooldownMinutes: t.arg.int(),
     },
     resolve: async (_root, args, ctx) => {
       const v = requireAdult(ctx);
@@ -56,7 +64,12 @@ builder.mutationField("updateChore", (t) =>
         if (args.tokenValue < 0) throw new Error("tokenValue must be ≥ 0");
         patch.token_value = args.tokenValue;
       }
+      if (args.kind != null) patch.kind = args.kind;
       if (args.recurrence != null) patch.recurrence = args.recurrence;
+      if (args.cooldownMinutes != null) {
+        if (args.cooldownMinutes < 0) throw new Error("cooldownMinutes must be ≥ 0");
+        patch.cooldown_minutes = args.cooldownMinutes;
+      }
       const updated = await ctx.db
         .updateTable("chores")
         .set(patch)
@@ -192,6 +205,7 @@ builder.mutationField("approveChore", (t) =>
             "a.due_date as a_due_date",
             "a.chore_id as a_chore_id",
             "c.token_value as token_value",
+            "c.kind as kind",
             "c.recurrence as recurrence",
             "c.archived as archived",
           ])
@@ -217,8 +231,14 @@ builder.mutationField("approveChore", (t) =>
           .where("id", "=", row.a_user)
           .execute();
 
-        // Auto-spawn the next instance for recurring chores (unless archived).
-        if (!row.archived && row.recurrence !== "one_off") {
+        // Auto-spawn the next instance only for scheduled recurring chores.
+        // On-demand chores rely on the kid claiming again — no implicit
+        // assignment, only a cooldown gate enforced in claimChore.
+        if (
+          !row.archived &&
+          row.kind === "scheduled" &&
+          row.recurrence !== "one_off"
+        ) {
           const base = row.a_due_date ?? new Date();
           const nextDue = new Date(base);
           if (row.recurrence === "daily") nextDue.setDate(nextDue.getDate() + 1);
@@ -277,6 +297,81 @@ builder.mutationField("rejectChore", (t) =>
         .where("id", "=", args.assignmentId)
         .returningAll()
         .executeTakeFirstOrThrow();
+    },
+  }),
+);
+
+// On-demand chores: the kid (or any household member) self-claims a chore
+// they just did. Creates a `submitted` assignment for the viewer; an adult
+// still has to approve before tokens are credited. The cooldown blocks
+// re-claiming until cooldown_minutes have elapsed since the last approval
+// of this chore by this user.
+builder.mutationField("claimChore", (t) =>
+  t.field({
+    type: ChoreAssignmentRef,
+    authScopes: { authenticated: true },
+    args: { choreId: t.arg({ type: "UUID", required: true }) },
+    resolve: async (_root, args, ctx) => {
+      const v = requireViewer(ctx);
+      return ctx.db.transaction().execute(async (trx) => {
+        const chore = await trx
+          .selectFrom("chores")
+          .select(["id", "kind", "cooldown_minutes", "archived"])
+          .where("id", "=", args.choreId)
+          .where("household_id", "=", v.householdId)
+          .executeTakeFirst();
+        if (!chore) throw new Error("Chore not in your household");
+        if (chore.archived) throw new Error("Chore is archived");
+        if (chore.kind !== "on_demand") {
+          throw new Error("This chore must be assigned by an adult");
+        }
+
+        // Reject if there's already an open (non-finalized) claim by this user.
+        const open = await trx
+          .selectFrom("chore_assignments")
+          .select("id")
+          .where("chore_id", "=", chore.id)
+          .where("assigned_to_user_id", "=", v.userId)
+          .where("status", "in", ["pending", "submitted", "rejected"])
+          .executeTakeFirst();
+        if (open) throw new Error("You already have an open claim on this chore");
+
+        // Cooldown check.
+        if (chore.cooldown_minutes > 0) {
+          const last = await trx
+            .selectFrom("chore_assignments")
+            .select("approved_at")
+            .where("chore_id", "=", chore.id)
+            .where("assigned_to_user_id", "=", v.userId)
+            .where("status", "=", "approved")
+            .orderBy("approved_at", "desc")
+            .limit(1)
+            .executeTakeFirst();
+          if (last?.approved_at) {
+            const ready = new Date(last.approved_at);
+            ready.setMinutes(ready.getMinutes() + chore.cooldown_minutes);
+            if (Date.now() < ready.getTime()) {
+              const minsLeft = Math.ceil(
+                (ready.getTime() - Date.now()) / 60_000,
+              );
+              throw new Error(
+                `On cooldown — try again in ${minsLeft} minute${minsLeft === 1 ? "" : "s"}`,
+              );
+            }
+          }
+        }
+
+        return trx
+          .insertInto("chore_assignments")
+          .values({
+            chore_id: chore.id,
+            assigned_to_user_id: v.userId,
+            status: "submitted",
+            submitted_at: new Date(),
+          })
+          .returningAll()
+          .executeTakeFirstOrThrow();
+      });
     },
   }),
 );

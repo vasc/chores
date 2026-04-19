@@ -1,3 +1,36 @@
+enum Enum$ChoreKind {
+  on_demand,
+  scheduled,
+  $unknown;
+
+  factory Enum$ChoreKind.fromJson(String value) =>
+      fromJson$Enum$ChoreKind(value);
+
+  String toJson() => toJson$Enum$ChoreKind(this);
+}
+
+String toJson$Enum$ChoreKind(Enum$ChoreKind e) {
+  switch (e) {
+    case Enum$ChoreKind.on_demand:
+      return r'on_demand';
+    case Enum$ChoreKind.scheduled:
+      return r'scheduled';
+    case Enum$ChoreKind.$unknown:
+      return r'$unknown';
+  }
+}
+
+Enum$ChoreKind fromJson$Enum$ChoreKind(String value) {
+  switch (value) {
+    case r'on_demand':
+      return Enum$ChoreKind.on_demand;
+    case r'scheduled':
+      return Enum$ChoreKind.scheduled;
+    default:
+      return Enum$ChoreKind.$unknown;
+  }
+}
+
 enum Enum$ChoreStatus {
   approved,
   pending,

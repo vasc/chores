@@ -318,7 +318,9 @@ class Fragment$ChoreFields {
     required this.title,
     this.description,
     required this.tokenValue,
+    required this.kind,
     required this.recurrence,
+    required this.cooldownMinutes,
     required this.archived,
     required this.createdAt,
     this.$__typename = 'Chore',
@@ -329,7 +331,9 @@ class Fragment$ChoreFields {
     final l$title = json['title'];
     final l$description = json['description'];
     final l$tokenValue = json['tokenValue'];
+    final l$kind = json['kind'];
     final l$recurrence = json['recurrence'];
+    final l$cooldownMinutes = json['cooldownMinutes'];
     final l$archived = json['archived'];
     final l$createdAt = json['createdAt'];
     final l$$__typename = json['__typename'];
@@ -338,7 +342,9 @@ class Fragment$ChoreFields {
       title: (l$title as String),
       description: (l$description as String?),
       tokenValue: (l$tokenValue as int),
+      kind: fromJson$Enum$ChoreKind((l$kind as String)),
       recurrence: fromJson$Enum$Recurrence((l$recurrence as String)),
+      cooldownMinutes: (l$cooldownMinutes as int),
       archived: (l$archived as bool),
       createdAt: parseDateTime(l$createdAt),
       $__typename: (l$$__typename as String),
@@ -353,7 +359,11 @@ class Fragment$ChoreFields {
 
   final int tokenValue;
 
+  final Enum$ChoreKind kind;
+
   final Enum$Recurrence recurrence;
+
+  final int cooldownMinutes;
 
   final bool archived;
 
@@ -371,8 +381,12 @@ class Fragment$ChoreFields {
     _resultData['description'] = l$description;
     final l$tokenValue = tokenValue;
     _resultData['tokenValue'] = l$tokenValue;
+    final l$kind = kind;
+    _resultData['kind'] = toJson$Enum$ChoreKind(l$kind);
     final l$recurrence = recurrence;
     _resultData['recurrence'] = toJson$Enum$Recurrence(l$recurrence);
+    final l$cooldownMinutes = cooldownMinutes;
+    _resultData['cooldownMinutes'] = l$cooldownMinutes;
     final l$archived = archived;
     _resultData['archived'] = l$archived;
     final l$createdAt = createdAt;
@@ -388,7 +402,9 @@ class Fragment$ChoreFields {
     final l$title = title;
     final l$description = description;
     final l$tokenValue = tokenValue;
+    final l$kind = kind;
     final l$recurrence = recurrence;
+    final l$cooldownMinutes = cooldownMinutes;
     final l$archived = archived;
     final l$createdAt = createdAt;
     final l$$__typename = $__typename;
@@ -397,7 +413,9 @@ class Fragment$ChoreFields {
       l$title,
       l$description,
       l$tokenValue,
+      l$kind,
       l$recurrence,
+      l$cooldownMinutes,
       l$archived,
       l$createdAt,
       l$$__typename,
@@ -432,9 +450,19 @@ class Fragment$ChoreFields {
     if (l$tokenValue != lOther$tokenValue) {
       return false;
     }
+    final l$kind = kind;
+    final lOther$kind = other.kind;
+    if (l$kind != lOther$kind) {
+      return false;
+    }
     final l$recurrence = recurrence;
     final lOther$recurrence = other.recurrence;
     if (l$recurrence != lOther$recurrence) {
+      return false;
+    }
+    final l$cooldownMinutes = cooldownMinutes;
+    final lOther$cooldownMinutes = other.cooldownMinutes;
+    if (l$cooldownMinutes != lOther$cooldownMinutes) {
       return false;
     }
     final l$archived = archived;
@@ -478,7 +506,9 @@ abstract class CopyWith$Fragment$ChoreFields<TRes> {
     String? title,
     String? description,
     int? tokenValue,
+    Enum$ChoreKind? kind,
     Enum$Recurrence? recurrence,
+    int? cooldownMinutes,
     bool? archived,
     DateTime? createdAt,
     String? $__typename,
@@ -503,7 +533,9 @@ class _CopyWithImpl$Fragment$ChoreFields<TRes>
     Object? title = _undefined,
     Object? description = _undefined,
     Object? tokenValue = _undefined,
+    Object? kind = _undefined,
     Object? recurrence = _undefined,
+    Object? cooldownMinutes = _undefined,
     Object? archived = _undefined,
     Object? createdAt = _undefined,
     Object? $__typename = _undefined,
@@ -519,9 +551,16 @@ class _CopyWithImpl$Fragment$ChoreFields<TRes>
         tokenValue: tokenValue == _undefined || tokenValue == null
             ? _instance.tokenValue
             : (tokenValue as int),
+        kind: kind == _undefined || kind == null
+            ? _instance.kind
+            : (kind as Enum$ChoreKind),
         recurrence: recurrence == _undefined || recurrence == null
             ? _instance.recurrence
             : (recurrence as Enum$Recurrence),
+        cooldownMinutes:
+            cooldownMinutes == _undefined || cooldownMinutes == null
+                ? _instance.cooldownMinutes
+                : (cooldownMinutes as int),
         archived: archived == _undefined || archived == null
             ? _instance.archived
             : (archived as bool),
@@ -545,7 +584,9 @@ class _CopyWithStubImpl$Fragment$ChoreFields<TRes>
     String? title,
     String? description,
     int? tokenValue,
+    Enum$ChoreKind? kind,
     Enum$Recurrence? recurrence,
+    int? cooldownMinutes,
     bool? archived,
     DateTime? createdAt,
     String? $__typename,
@@ -591,7 +632,21 @@ const fragmentDefinitionChoreFields = FragmentDefinitionNode(
       selectionSet: null,
     ),
     FieldNode(
+      name: NameNode(value: 'kind'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
       name: NameNode(value: 'recurrence'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'cooldownMinutes'),
       alias: null,
       arguments: [],
       directives: [],
