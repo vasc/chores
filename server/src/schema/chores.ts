@@ -189,7 +189,11 @@ builder.mutationField("approveChore", (t) =>
             "a.id as a_id",
             "a.status as a_status",
             "a.assigned_to_user_id as a_user",
+            "a.due_date as a_due_date",
+            "a.chore_id as a_chore_id",
             "c.token_value as token_value",
+            "c.recurrence as recurrence",
+            "c.archived as archived",
           ])
           .executeTakeFirst();
         if (!row) throw new Error("Assignment not found");
@@ -212,6 +216,32 @@ builder.mutationField("approveChore", (t) =>
           .set((eb) => ({ token_balance: eb("token_balance", "+", row.token_value) }))
           .where("id", "=", row.a_user)
           .execute();
+
+        // Auto-spawn the next instance for recurring chores (unless archived).
+        if (!row.archived && row.recurrence !== "one_off") {
+          const base = row.a_due_date ?? new Date();
+          const nextDue = new Date(base);
+          if (row.recurrence === "daily") nextDue.setDate(nextDue.getDate() + 1);
+          if (row.recurrence === "weekly") nextDue.setDate(nextDue.getDate() + 7);
+          // Skip if a non-finalized assignment for the same chore+user already exists.
+          const dup = await trx
+            .selectFrom("chore_assignments")
+            .select("id")
+            .where("chore_id", "=", row.a_chore_id)
+            .where("assigned_to_user_id", "=", row.a_user)
+            .where("status", "in", ["pending", "submitted", "rejected"])
+            .executeTakeFirst();
+          if (!dup) {
+            await trx
+              .insertInto("chore_assignments")
+              .values({
+                chore_id: row.a_chore_id,
+                assigned_to_user_id: row.a_user,
+                due_date: nextDue,
+              })
+              .execute();
+          }
+        }
 
         return updated;
       });

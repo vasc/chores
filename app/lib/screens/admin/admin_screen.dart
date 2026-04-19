@@ -450,6 +450,9 @@ class _MembersTab extends ConsumerWidget {
         }
         final parsed = Query$Household.fromJson(result.data!);
         final members = parsed.members;
+        final leaderboard = [
+          ...members.where((m) => m.role == Enum$Role.child),
+        ]..sort((a, b) => b.tokenBalance.compareTo(a.tokenBalance));
         return Scaffold(
           body: ListView(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -458,7 +461,51 @@ class _MembersTab extends ConsumerWidget {
                 title: Text(parsed.household.name),
                 subtitle: const Text('Household'),
               ),
+              if (leaderboard.isNotEmpty) ...[
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Text('🏆 Leaderboard',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                ),
+                Card(
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < leaderboard.length; i++)
+                        ListTile(
+                          leading: SizedBox(
+                            width: 36,
+                            child: Text(
+                              i == 0
+                                  ? '🥇'
+                                  : i == 1
+                                      ? '🥈'
+                                      : i == 2
+                                          ? '🥉'
+                                          : '#${i + 1}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 22),
+                            ),
+                          ),
+                          title: Row(
+                            children: [
+                              Text(leaderboard[i].avatarEmoji),
+                              const SizedBox(width: 8),
+                              Text(leaderboard[i].name),
+                            ],
+                          ),
+                          trailing: Text('${leaderboard[i].tokenBalance} 🪙',
+                              style: const TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
               const Divider(),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 4),
+                child: Text('All members',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+              ),
               for (final m in members)
                 ListTile(
                   leading: CircleAvatar(child: Text(m.avatarEmoji)),
