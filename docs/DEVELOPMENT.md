@@ -52,7 +52,13 @@ bun run migrate
 
 ### 2. DB types
 
-Add `emoji: string` to the `chores` row type in `src/db/types.ts`.
+```bash
+bun run db:types
+```
+
+kysely-codegen introspects the live DB and rewrites `src/db/generated.ts`.
+Commit that file with the migration so CI's `bun run db:types:verify` stays
+green.
 
 ### 3. Pothos type
 

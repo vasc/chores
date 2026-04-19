@@ -1,13 +1,13 @@
 import type { Selectable } from "kysely";
 import { builder } from "./builder.ts";
 import type {
-  ChoreAssignmentsTable,
-  ChoresTable,
-  HouseholdsTable,
-  RedemptionsTable,
-  RewardsTable,
-  UsersTable,
-} from "../db/types.ts";
+  ChoreAssignments,
+  Chores,
+  Households,
+  Redemptions,
+  Rewards,
+  Users,
+} from "../db/generated.ts";
 import {
   ChoreStatusEnum,
   RecurrenceEnum,
@@ -15,12 +15,12 @@ import {
   RoleEnum,
 } from "./enums.ts";
 
-export type HouseholdRow = Selectable<HouseholdsTable>;
-export type UserRow = Selectable<UsersTable>;
-export type ChoreRow = Selectable<ChoresTable>;
-export type AssignmentRow = Selectable<ChoreAssignmentsTable>;
-export type RewardRow = Selectable<RewardsTable>;
-export type RedemptionRow = Selectable<RedemptionsTable>;
+export type HouseholdRow = Selectable<Households>;
+export type UserRow = Selectable<Users>;
+export type ChoreRow = Selectable<Chores>;
+export type AssignmentRow = Selectable<ChoreAssignments>;
+export type RewardRow = Selectable<Rewards>;
+export type RedemptionRow = Selectable<Redemptions>;
 
 export const HouseholdRef = builder.objectRef<HouseholdRow>("Household").implement({
   fields: (t) => ({

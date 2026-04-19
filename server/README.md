@@ -15,6 +15,8 @@ For the big picture, see [`../README.md`](../README.md),
 | `bun run typecheck` | `tsc --noEmit` |
 | `bun run migrate` | Apply pending migrations |
 | `bun run migrate:down` | Roll back the latest migration |
+| `bun run db:types` | Introspect the live DB and rewrite `src/db/generated.ts` |
+| `bun run db:types:verify` | Fail if `src/db/generated.ts` is out of date (CI) |
 | `bun run schema` | Print the Pothos schema to `schema.graphql` |
 | `bun run sync` | `schema` + copy to `../app/lib/graphql/schema.graphql` |
 
@@ -46,7 +48,7 @@ server/
     ├── context.ts            Per-request context + auth helpers
     ├── db/
     │   ├── kysely.ts         PG pool + Kysely instance
-    │   ├── types.ts          DB row types
+    │   ├── generated.ts      kysely-codegen output (committed; `bun run db:types`)
     │   ├── migrate.ts        Migration CLI
     │   └── migrations/
     │       └── 0001_init.ts  Initial schema
@@ -79,8 +81,10 @@ bun run migrate:down     # rollback latest
 
 **Never edit a migration that has been applied.** Add a new one.
 
-After changing the DB shape, update `src/db/types.ts` so Kysely stays
-typed against the real columns.
+After changing the DB shape, run `bun run db:types` to regenerate
+`src/db/generated.ts` from the live Postgres schema. Commit the
+regenerated file alongside the migration. CI's `bun run db:types:verify`
+fails if the committed file is out of date.
 
 ## End-to-end test
 

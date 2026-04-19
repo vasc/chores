@@ -97,11 +97,13 @@ after `bun run sync` + `build_runner`.
 
 ### `server/src/db/`
 
-- **`kysely.ts`** — creates the `pg` pool and Kysely instance. Exports the
-  typed `DB` interface so resolvers get table completion.
-- **`types.ts`** — hand-written column types. Keeping this in-repo rather
-  than running `kysely-codegen` at build time avoids a live-DB dependency
-  during CI / fresh clones.
+- **`kysely.ts`** — creates the `pg` pool and Kysely instance. Imports the
+  typed `DB` interface from `generated.ts` so resolvers get table completion.
+- **`generated.ts`** — emitted by `kysely-codegen` introspecting the live
+  Postgres schema. Committed to VCS so fresh clones and CI don't need a DB
+  to compile. Regenerated with `bun run db:types`; CI runs
+  `bun run db:types:verify` to fail builds when someone forgets to commit
+  an update. Never hand-edit — change a migration and re-run.
 - **`migrate.ts`** — CLI runner. `up` applies pending migrations; `down`
   rolls back the latest.
 - **`migrations/0001_init.ts`** — full initial schema with Postgres enum

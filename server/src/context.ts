@@ -1,13 +1,13 @@
 import type { YogaInitialContext } from "graphql-yoga";
 import { db } from "./db/kysely.ts";
 import type { Kysely } from "kysely";
-import type { DB, Role } from "./db/types.ts";
+import type { DB, UserRole } from "./db/generated.ts";
 import { verifyToken } from "./auth/jwt.ts";
 
 export interface Viewer {
   userId: string;
   householdId: string;
-  role: Role;
+  role: UserRole;
 }
 
 export interface AppContext {

@@ -1,7 +1,7 @@
 import { Kysely, PostgresDialect } from "kysely";
 import pg from "pg";
 import { env } from "../env.ts";
-import type { DB } from "./types.ts";
+import type { DB } from "./generated.ts";
 
 const pool = new pg.Pool({ connectionString: env.DATABASE_URL });
 

@@ -1,12 +1,17 @@
 import { builder } from "./builder.ts";
-import type { ChoreStatus, RedemptionStatus, Recurrence, Role } from "../db/types.ts";
+import type {
+  ChoreStatus,
+  RecurrenceType,
+  RedemptionStatus,
+  UserRole,
+} from "../db/generated.ts";
 
 export const RoleEnum = builder.enumType("Role", {
-  values: ["adult", "child"] as const satisfies readonly Role[],
+  values: ["adult", "child"] as const satisfies readonly UserRole[],
 });
 
 export const RecurrenceEnum = builder.enumType("Recurrence", {
-  values: ["one_off", "daily", "weekly"] as const satisfies readonly Recurrence[],
+  values: ["one_off", "daily", "weekly"] as const satisfies readonly RecurrenceType[],
 });
 
 export const ChoreStatusEnum = builder.enumType("ChoreStatus", {

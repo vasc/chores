@@ -32,7 +32,7 @@ Guidance for Claude (or any assistant) working in this repository.
 │       ├── context.ts              Request context (db, viewer)
 │       ├── db/
 │       │   ├── kysely.ts           PG pool + Kysely instance
-│       │   ├── types.ts            DB row types
+│       │   ├── generated.ts        kysely-codegen output (committed; run `bun run db:types`)
 │       │   ├── migrate.ts          Migration runner CLI
 │       │   └── migrations/
 │       │       └── 0001_init.ts    Full schema
@@ -100,10 +100,12 @@ Guidance for Claude (or any assistant) working in this repository.
 ### Adding a database column or table
 
 1. Create a **new** migration file `server/src/db/migrations/000N_description.ts` (do **not** edit `0001_init.ts` — migrations are append-only).
-2. Update `server/src/db/types.ts` with the matching table / column types.
-3. `bun run migrate` to apply.
+2. `bun run migrate` to apply.
+3. `bun run db:types` to regenerate `server/src/db/generated.ts` from the live DB (kysely-codegen introspects the schema). Commit the regenerated file.
 4. Surface new fields via Pothos in `server/src/schema/types.ts`.
-5. Re-sync + regen as above.
+5. Re-sync + regen client types as above.
+
+CI should run `bun run db:types:verify` against a test DB that's had migrations applied — it exits non-zero if `generated.ts` is out of date, so a missed regen can't slip in.
 
 ### Writing a resolver
 
@@ -190,7 +192,7 @@ DATABASE_URL=postgres://chores:chores@localhost:5432/chores bash scripts/e2e.sh
 
 A rough checklist to stay consistent with the existing shape:
 
-1. **DB** — migration + `db/types.ts`.
+1. **DB** — migration + `bun run db:types` to regen `db/generated.ts`.
 2. **GraphQL types** — add/extend a `builder.objectRef<…>(…).implement(…)` in `schema/types.ts`.
 3. **Query / mutation** — add to the matching file under `schema/`. Use `authScopes` for adult-only ones. Wrap state-changing logic in a transaction when it touches `users.token_balance`.
 4. **Resync + regen** — `bun run sync` then `dart run build_runner build --delete-conflicting-outputs`.

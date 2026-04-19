@@ -1,13 +1,13 @@
 import { SignJWT, jwtVerify } from "jose";
 import { env } from "../env.ts";
-import type { Role } from "../db/types.ts";
+import type { UserRole } from "../db/generated.ts";
 
 const secret = new TextEncoder().encode(env.JWT_SECRET);
 
 export interface TokenPayload {
   userId: string;
   householdId: string;
-  role: Role;
+  role: UserRole;
 }
 
 const ADULT_TTL = "30d";
