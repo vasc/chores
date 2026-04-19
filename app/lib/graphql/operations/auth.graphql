@@ -1,0 +1,38 @@
+mutation SignUpHousehold(
+  $householdName: String!
+  $adultName: String!
+  $email: String!
+  $password: String!
+) {
+  signUpHousehold(
+    householdName: $householdName
+    adultName: $adultName
+    email: $email
+    password: $password
+  ) {
+    token
+    user { ...UserFields }
+  }
+}
+
+mutation LoginAdult($email: String!, $password: String!) {
+  loginAdult(email: $email, password: $password) {
+    token
+    user { ...UserFields }
+  }
+}
+
+mutation KidLogin($userId: UUID!, $pin: String!) {
+  kidLogin(userId: $userId, pin: $pin) {
+    token
+    user { ...UserFields }
+  }
+}
+
+mutation AddChild($name: String!, $pin: String!, $avatarEmoji: String) {
+  addChild(name: $name, pin: $pin, avatarEmoji: $avatarEmoji) { ...UserFields }
+}
+
+mutation AddAdult($name: String!, $email: String!, $password: String!) {
+  addAdult(name: $name, email: $email, password: $password) { ...UserFields }
+}

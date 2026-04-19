@@ -1,0 +1,135 @@
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+type Chore {
+  archived: Boolean!
+  createdAt: DateTime!
+  createdBy: User!
+  description: String
+  id: ID!
+  recurrence: Recurrence!
+  title: String!
+  tokenValue: Int!
+}
+
+type ChoreAssignment {
+  approvedAt: DateTime
+  assignedTo: User!
+  chore: Chore!
+  createdAt: DateTime!
+  dueDate: DateTime
+  id: ID!
+  rejectReason: String
+  status: ChoreStatus!
+  submittedAt: DateTime
+}
+
+enum ChoreStatus {
+  approved
+  pending
+  rejected
+  submitted
+}
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+type Household {
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+}
+
+type Mutation {
+  addAdult(email: String!, name: String!, password: String!): User!
+  addChild(avatarEmoji: String, name: String!, pin: String!): User!
+  approveChore(assignmentId: UUID!): ChoreAssignment!
+  approveRedemption(id: UUID!): Redemption!
+  archiveChore(id: UUID!): Chore!
+  archiveReward(id: UUID!): Reward!
+  assignChore(assignedToUserId: UUID!, choreId: UUID!, dueDate: DateTime): ChoreAssignment!
+  createChore(description: String, recurrence: Recurrence = one_off, title: String!, tokenValue: Int!): Chore!
+  createReward(description: String, title: String!, tokenCost: Int!): Reward!
+  denyRedemption(id: UUID!, reason: String): Redemption!
+  fulfillRedemption(id: UUID!): Redemption!
+  kidLogin(pin: String!, userId: UUID!): AuthPayload!
+  loginAdult(email: String!, password: String!): AuthPayload!
+  rejectChore(assignmentId: UUID!, reason: String): ChoreAssignment!
+  requestRedemption(rewardId: UUID!): Redemption!
+  signUpHousehold(adultName: String!, email: String!, householdName: String!, password: String!): AuthPayload!
+  submitChore(assignmentId: UUID!): ChoreAssignment!
+  updateChildPin(newPin: String!, userId: UUID!): User!
+  updateChore(description: String, id: UUID!, recurrence: Recurrence, title: String, tokenValue: Int): Chore!
+  updateReward(description: String, id: UUID!, title: String, tokenCost: Int): Reward!
+}
+
+type Query {
+  assignments(mineOnly: Boolean = false, status: ChoreStatus): [ChoreAssignment!]!
+  chores(includeArchived: Boolean = false): [Chore!]!
+  household: Household!
+
+  """Public list of kids in a given household, for the kid login picker"""
+  kidsForLogin(householdId: UUID!): [User!]!
+  leaderboard: [User!]!
+  me: User
+  members: [User!]!
+  pendingApprovals: [ChoreAssignment!]!
+  pendingRedemptions: [Redemption!]!
+  redemptions(mineOnly: Boolean = false, status: RedemptionStatus): [Redemption!]!
+  rewards(includeArchived: Boolean = false): [Reward!]!
+}
+
+enum Recurrence {
+  daily
+  one_off
+  weekly
+}
+
+type Redemption {
+  decidedAt: DateTime
+  decisionReason: String
+  id: ID!
+  requestedAt: DateTime!
+  reward: Reward!
+  status: RedemptionStatus!
+  tokensSpent: Int!
+  user: User!
+}
+
+enum RedemptionStatus {
+  approved
+  denied
+  fulfilled
+  requested
+}
+
+type Reward {
+  archived: Boolean!
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  title: String!
+  tokenCost: Int!
+}
+
+enum Role {
+  adult
+  child
+}
+
+scalar UUID
+
+type User {
+  avatarEmoji: String!
+  createdAt: DateTime!
+  email: String
+  householdId: UUID!
+  id: ID!
+  name: String!
+  role: Role!
+  tokenBalance: Int!
+}

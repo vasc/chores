@@ -1,0 +1,43 @@
+mutation CreateChore(
+  $title: String!
+  $description: String
+  $tokenValue: Int!
+  $recurrence: Recurrence = one_off
+) {
+  createChore(
+    title: $title
+    description: $description
+    tokenValue: $tokenValue
+    recurrence: $recurrence
+  ) { ...ChoreFields }
+}
+
+mutation ArchiveChore($id: UUID!) {
+  archiveChore(id: $id) { ...ChoreFields }
+}
+
+mutation AssignChore(
+  $choreId: UUID!
+  $assignedToUserId: UUID!
+  $dueDate: DateTime
+) {
+  assignChore(
+    choreId: $choreId
+    assignedToUserId: $assignedToUserId
+    dueDate: $dueDate
+  ) { ...AssignmentFields }
+}
+
+mutation SubmitChore($assignmentId: UUID!) {
+  submitChore(assignmentId: $assignmentId) { ...AssignmentFields }
+}
+
+mutation ApproveChore($assignmentId: UUID!) {
+  approveChore(assignmentId: $assignmentId) { ...AssignmentFields }
+}
+
+mutation RejectChore($assignmentId: UUID!, $reason: String) {
+  rejectChore(assignmentId: $assignmentId, reason: $reason) {
+    ...AssignmentFields
+  }
+}

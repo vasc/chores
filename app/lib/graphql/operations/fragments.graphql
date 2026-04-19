@@ -1,0 +1,51 @@
+fragment UserFields on User {
+  id
+  householdId
+  name
+  role
+  avatarEmoji
+  tokenBalance
+  email
+}
+
+fragment ChoreFields on Chore {
+  id
+  title
+  description
+  tokenValue
+  recurrence
+  archived
+  createdAt
+}
+
+fragment AssignmentFields on ChoreAssignment {
+  id
+  status
+  dueDate
+  submittedAt
+  approvedAt
+  rejectReason
+  createdAt
+  chore { ...ChoreFields }
+  assignedTo { ...UserFields }
+}
+
+fragment RewardFields on Reward {
+  id
+  title
+  description
+  tokenCost
+  archived
+  createdAt
+}
+
+fragment RedemptionFields on Redemption {
+  id
+  status
+  tokensSpent
+  requestedAt
+  decidedAt
+  decisionReason
+  reward { ...RewardFields }
+  user { ...UserFields }
+}

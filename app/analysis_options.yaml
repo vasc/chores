@@ -1,0 +1,9 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - "lib/graphql/**/*.graphql.dart"
+    - "lib/graphql/schema.graphql.dart"
+
+linter:
+  rules:

@@ -1,0 +1,16 @@
+targets:
+  $default:
+    builders:
+      graphql_codegen:
+        options:
+          scalars:
+            DateTime:
+              type: DateTime
+              import: "package:chores/graphql/scalars.dart"
+              fromJsonFunctionName: parseDateTime
+              toJsonFunctionName: dateTimeToIso
+            UUID:
+              type: String
+        generate_for:
+          - lib/graphql/schema.graphql
+          - lib/graphql/**/*.graphql

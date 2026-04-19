@@ -1,0 +1,40 @@
+query Me {
+  me { ...UserFields }
+}
+
+query Household {
+  household {
+    id
+    name
+  }
+  members { ...UserFields }
+}
+
+query KidsForLogin($householdId: UUID!) {
+  kidsForLogin(householdId: $householdId) { ...UserFields }
+}
+
+query Chores($includeArchived: Boolean = false) {
+  chores(includeArchived: $includeArchived) { ...ChoreFields }
+}
+
+query Assignments($mineOnly: Boolean = false, $status: ChoreStatus) {
+  assignments(mineOnly: $mineOnly, status: $status) { ...AssignmentFields }
+}
+
+query Rewards($includeArchived: Boolean = false) {
+  rewards(includeArchived: $includeArchived) { ...RewardFields }
+}
+
+query Redemptions($mineOnly: Boolean = false, $status: RedemptionStatus) {
+  redemptions(mineOnly: $mineOnly, status: $status) { ...RedemptionFields }
+}
+
+query PendingApprovals {
+  pendingApprovals { ...AssignmentFields }
+  pendingRedemptions { ...RedemptionFields }
+}
+
+query Leaderboard {
+  leaderboard { ...UserFields }
+}

@@ -1,0 +1,31 @@
+mutation CreateReward(
+  $title: String!
+  $description: String
+  $tokenCost: Int!
+) {
+  createReward(
+    title: $title
+    description: $description
+    tokenCost: $tokenCost
+  ) { ...RewardFields }
+}
+
+mutation ArchiveReward($id: UUID!) {
+  archiveReward(id: $id) { ...RewardFields }
+}
+
+mutation RequestRedemption($rewardId: UUID!) {
+  requestRedemption(rewardId: $rewardId) { ...RedemptionFields }
+}
+
+mutation ApproveRedemption($id: UUID!) {
+  approveRedemption(id: $id) { ...RedemptionFields }
+}
+
+mutation DenyRedemption($id: UUID!, $reason: String) {
+  denyRedemption(id: $id, reason: $reason) { ...RedemptionFields }
+}
+
+mutation FulfillRedemption($id: UUID!) {
+  fulfillRedemption(id: $id) { ...RedemptionFields }
+}
