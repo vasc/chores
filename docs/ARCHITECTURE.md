@@ -72,6 +72,28 @@ Dart code (typed)
 A rename on the server surfaces as a Dart compile error on the client
 after `bun run sync` + `build_runner`.
 
+### End-to-end static guarantees
+
+Every layer is type-checked at compile time and the `.github/workflows/ci.yml`
+workflow enforces that the committed artifacts at each boundary match what
+would be regenerated from upstream:
+
+| Boundary | Generator | Static check | CI gate |
+|---|---|---|---|
+| Postgres schema → `server/src/db/generated.ts` | `kysely-codegen` | `tsc` (resolvers use columns that exist) | `bun run db:types:verify` — exits non-zero if the committed file diverges from the live DB |
+| Pothos resolvers → `server/schema.graphql` | `printSchema()` in `src/schema/print.ts` | `tsc` (Pothos infers resolver types from the builder) | `bun run schema` + `git diff --exit-code schema.graphql` |
+| `server/schema.graphql` → `app/lib/graphql/schema.graphql` | `cp` via `bun run sync` | — | `bun run sync` + `git diff --exit-code` |
+| App SDL + `.graphql` operations → `*.graphql.dart` | `graphql_codegen` via `build_runner` | **codegen fails** if an operation selects a field that isn't in the schema | `dart run build_runner build` + `git diff --exit-code`; non-existent fields abort codegen with `Failed to find type for field X on Y` |
+| `*.graphql.dart` → screens/widgets | Dart analyzer | `flutter analyze` — removed/renamed fields fail to compile everywhere they're used | `flutter analyze` + `flutter test` |
+
+The **end-to-end static catch**: a Pothos resolver change that removes or
+renames a field propagates through `schema.graphql` → Dart codegen → the
+analyzer. If the generated Dart no longer has a property, every
+`user.removedField` access is a compile error. If you didn't regen, the
+diff checks fail first. CI blocks the PR either way. Verified empirically
+by removing `tokenBalance` from the Pothos `User` — codegen aborted with
+`Invalid GraphQL: Failed to find type for field tokenBalance on User`.
+
 ## Component responsibilities
 
 ### `server/src/schema/`

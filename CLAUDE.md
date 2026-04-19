@@ -7,6 +7,7 @@ Guidance for Claude (or any assistant) working in this repository.
 - **Two subprojects**: `server/` (Bun + TypeScript + GraphQL Yoga + Pothos + Kysely + Postgres) and `app/` (Flutter for iOS, Android, macOS).
 - **Contract between them**: GraphQL SDL at `server/schema.graphql`. Server is code-first via Pothos and prints the SDL. Client consumes the SDL plus `.graphql` operation files via `graphql_codegen` to produce typed Dart.
 - **Always resync the schema** after any server schema change: `cd server && bun run sync` copies SDL to `app/lib/graphql/schema.graphql`. Then in `app/` run `dart run build_runner build --delete-conflicting-outputs`.
+- **Static end-to-end contract enforced by CI** (`.github/workflows/ci.yml`): Pothos TS → tsc; `server/schema.graphql` and `app/lib/graphql/schema.graphql` must match what Pothos would print (enforced via `git diff --exit-code`); `*.graphql.dart` must match what `build_runner` would emit; `flutter analyze` must pass. A server-side field removal fails either `build_runner` (operation selects a missing field) or the Dart analyzer (a screen references a property that no longer exists on the generated class). See `docs/ARCHITECTURE.md` → "End-to-end static guarantees".
 - **Database**: Postgres via Kysely. Migrations in `server/src/db/migrations/`. Run with `bun run migrate`.
 - **Auth**: JWT (HS256, `jose`). Adults 30-day TTL, kids 8h. Scope-auth plugin gates adult-only mutations.
 

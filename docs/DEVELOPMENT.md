@@ -101,6 +101,34 @@ Consume `chore.emoji` in the screens that render chores.
 - `bun run scripts/e2e.sh` (adjust if you want the new field covered).
 - `flutter analyze`, `flutter test`, then exercise in the app.
 
+### 10. Commit the generated artifacts
+
+Commit these together with the source change:
+
+- `server/src/db/generated.ts` (if the migration changed columns)
+- `server/schema.graphql` (always, if the GraphQL shape changed)
+- `app/lib/graphql/schema.graphql` (copy of the above)
+- `app/lib/graphql/operations/*.graphql.dart` (regenerated Dart)
+
+CI (`.github/workflows/ci.yml`) re-runs every generator and fails the
+build if any of these artifacts is out of date. If you forget to commit
+one, the CI log points at exactly which file needs regenerating.
+
+### Why this is end-to-end statically safe
+
+A server-side rename or removal fails the pipeline at the earliest layer
+where a reference still points at the old name:
+
+1. **Pothos** (`tsc`) fails if the resolver still reads `u.old_column`.
+2. **kysely-codegen verify** fails if `db/generated.ts` wasn't regenerated.
+3. **Schema diff check** fails if `schema.graphql` wasn't regenerated.
+4. **graphql_codegen** aborts with "Failed to find type for field X on Y"
+   if a `.graphql` operation still selects the removed field.
+5. **flutter analyze** fails if a screen still references
+   `obj.removedField` on the generated Dart class.
+
+You never have to wait for runtime to notice a contract break.
+
 ## Debugging
 
 ### Server
