@@ -13,7 +13,7 @@ ThemeData buildTheme(Brightness brightness) {
       backgroundColor: scheme.surface,
       foregroundColor: scheme.onSurface,
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       elevation: 1,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),

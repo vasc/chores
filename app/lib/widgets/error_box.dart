@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 class ErrorBox extends StatelessWidget {
   const ErrorBox(this.message, {super.key});
@@ -22,6 +23,12 @@ class ErrorBox extends StatelessWidget {
 }
 
 String prettifyError(Object e) {
+  if (e is OperationException) {
+    if (e.graphqlErrors.isNotEmpty) {
+      return e.graphqlErrors.map((g) => g.message).join('\n');
+    }
+    if (e.linkException != null) return e.linkException.toString();
+  }
   final s = e.toString();
   if (s.startsWith('Exception: ')) return s.substring('Exception: '.length);
   return s;

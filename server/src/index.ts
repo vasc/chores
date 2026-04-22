@@ -7,6 +7,7 @@ const yoga = createYoga({
   schema,
   context: buildContext,
   graphiql: true,
+  maskedErrors: false,
   cors: {
     origin: "*",
     credentials: false,

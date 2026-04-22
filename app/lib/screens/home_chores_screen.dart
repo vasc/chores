@@ -125,7 +125,7 @@ class _AssignmentTile extends StatelessWidget {
       child: ListTile(
         onTap: () => context.push('/chore/${a.id}'),
         leading: CircleAvatar(
-          backgroundColor: color.withOpacity(0.18),
+          backgroundColor: color.withValues(alpha: 0.18),
           child: Text(a.assignedTo.avatarEmoji),
         ),
         title: Text(a.chore.title),
@@ -157,8 +157,8 @@ class _StatusChip extends StatelessWidget {
     return Chip(
       label: Text(label),
       labelStyle: TextStyle(color: color, fontWeight: FontWeight.w600),
-      backgroundColor: color.withOpacity(0.12),
-      side: BorderSide(color: color.withOpacity(0.4)),
+      backgroundColor: color.withValues(alpha: 0.12),
+      side: BorderSide(color: color.withValues(alpha: 0.4)),
     );
   }
 }

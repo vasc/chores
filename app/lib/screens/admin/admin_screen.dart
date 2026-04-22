@@ -207,7 +207,7 @@ class _ChoreFormState extends ConsumerState<_ChoreForm> {
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<Enum$Recurrence>(
-              value: _recurrence,
+              initialValue: _recurrence,
               decoration: const InputDecoration(labelText: 'Recurrence'),
               items: const [
                 DropdownMenuItem(value: Enum$Recurrence.one_off, child: Text('One-off')),

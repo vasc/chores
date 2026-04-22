@@ -37,27 +37,38 @@ class _AdultSignupScreenState extends ConsumerState<AdultSignupScreen> {
       _busy = true;
       _error = null;
     });
-    final client = ref.read(graphqlClientProvider);
-    final result = await client.mutate(MutationOptions(
-      document: documentNodeMutationSignUpHousehold,
-      variables: Variables$Mutation$SignUpHousehold(
-        householdName: _household.text.trim(),
-        adultName: _name.text.trim(),
-        email: _email.text.trim(),
-        password: _password.text,
-      ).toJson(),
-    ));
-    if (result.hasException) {
-      setState(() {
-        _busy = false;
-        _error = prettifyError(result.exception!);
-      });
-      return;
+    try {
+      final client = ref.read(graphqlClientProvider);
+      final result = await client.mutate(MutationOptions(
+        document: documentNodeMutationSignUpHousehold,
+        variables: Variables$Mutation$SignUpHousehold(
+          householdName: _household.text.trim(),
+          adultName: _name.text.trim(),
+          email: _email.text.trim(),
+          password: _password.text,
+        ).toJson(),
+      ));
+      if (result.hasException) {
+        if (mounted) {
+          setState(() {
+            _busy = false;
+            _error = prettifyError(result.exception!);
+          });
+        }
+        return;
+      }
+      final parsed = Mutation$SignUpHousehold.fromJson(result.data!);
+      await ref
+          .read(authControllerProvider.notifier)
+          .setSession(parsed.signUpHousehold.token, parsed.signUpHousehold.user);
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _error = e.toString();
+        });
+      }
     }
-    final parsed = Mutation$SignUpHousehold.fromJson(result.data!);
-    await ref
-        .read(authControllerProvider.notifier)
-        .setSession(parsed.signUpHousehold.token, parsed.signUpHousehold.user);
   }
 
   @override
