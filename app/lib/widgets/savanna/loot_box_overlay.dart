@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../graphql/operations/fragments.graphql.dart';
+import '../../graphql/schema.graphql.dart';
 import '../../theme.dart';
 import 'atoms.dart';
 
@@ -10,11 +12,13 @@ class LootBoxOverlay extends StatefulWidget {
     super.key,
     required this.tokens,
     required this.xp,
+    required this.drop,
     this.onDone,
   });
 
   final int tokens;
   final int xp;
+  final Fragment$LootDropFields drop;
   final VoidCallback? onDone;
 
   @override
@@ -25,7 +29,6 @@ enum _Stage { intro, shaking, opening, reveal }
 
 class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStateMixin {
   _Stage _stage = _Stage.intro;
-  _Reward? _reward;
   late final AnimationController _spin;
   late final AnimationController _shake;
   late final AnimationController _lid;
@@ -49,17 +52,7 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
     });
     Future.delayed(const Duration(milliseconds: 2500), () {
       if (!mounted) return;
-      final roll = math.Random().nextDouble();
-      setState(() {
-        _reward = roll < 0.05
-            ? _rewards[3]
-            : roll < 0.2
-                ? _rewards[2]
-                : roll < 0.5
-                    ? _rewards[1]
-                    : _rewards[0];
-        _stage = _Stage.reveal;
-      });
+      setState(() => _stage = _Stage.reveal);
       _confetti.forward();
     });
   }
@@ -75,7 +68,7 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    final reward = _reward;
+    final presentation = _rarityPresentation(widget.drop.rarity);
     return Material(
       type: MaterialType.transparency,
       child: GestureDetector(
@@ -90,7 +83,7 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
           child: Stack(
             alignment: Alignment.center,
             children: [
-              if (_stage == _Stage.reveal && reward != null)
+              if (_stage == _Stage.reveal)
                 AnimatedBuilder(
                   animation: _spin,
                   builder: (_, __) {
@@ -98,7 +91,7 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
                       angle: _spin.value * 2 * math.pi,
                       child: CustomPaint(
                         size: const Size.square(800),
-                        painter: _RaysPainter(color: reward.glow),
+                        painter: _RaysPainter(color: presentation.glow),
                       ),
                     );
                   },
@@ -112,15 +105,15 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
                   ),
                 ),
               if (_stage == _Stage.intro)
-                const Positioned(
+                Positioned(
                   top: 80,
                   left: 0,
                   right: 0,
                   child: Column(
                     children: [
                       Text(
-                        'CHORE COMPLETE',
-                        style: TextStyle(
+                        widget.drop.isQuestBonus ? 'DAILY QUEST BONUS' : 'CHORE COMPLETE',
+                        style: const TextStyle(
                           fontFamily: 'Nunito',
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -128,8 +121,8 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
                           letterSpacing: 1.5,
                         ),
                       ),
-                      SizedBox(height: 4),
-                      Text(
+                      const SizedBox(height: 4),
+                      const Text(
                         'You earned a loot box!',
                         style: TextStyle(
                           fontFamily: 'Nunito',
@@ -143,7 +136,7 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
                   ),
                 ),
               if (_stage != _Stage.reveal) _buildBox(),
-              if (_stage == _Stage.reveal && reward != null) _buildReveal(reward),
+              if (_stage == _Stage.reveal) _buildReveal(presentation),
             ],
           ),
         ),
@@ -313,17 +306,17 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
     );
   }
 
-  Widget _buildReveal(_Reward reward) {
+  Widget _buildReveal(_Presentation p) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          reward.rarity.toUpperCase(),
+          widget.drop.rarity.name.toUpperCase(),
           style: TextStyle(
             fontFamily: 'Nunito',
             fontWeight: FontWeight.w900,
             fontSize: 11,
-            color: reward.color,
+            color: p.color,
             letterSpacing: 3,
           ),
         ),
@@ -335,20 +328,20 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [reward.color, reward.color.withValues(alpha: 0.8)],
+              colors: [p.color, p.color.withValues(alpha: 0.8)],
             ),
-            border: Border.all(color: reward.color, width: 3),
+            border: Border.all(color: p.color, width: 3),
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
-              BoxShadow(color: reward.glow, blurRadius: 60),
+              BoxShadow(color: p.glow, blurRadius: 60),
             ],
           ),
           alignment: Alignment.center,
-          child: Text(reward.emoji, style: const TextStyle(fontSize: 72)),
+          child: Text(widget.drop.itemEmoji, style: const TextStyle(fontSize: 72)),
         ),
         const SizedBox(height: 14),
         Text(
-          reward.label,
+          widget.drop.itemLabel,
           style: const TextStyle(
             fontFamily: 'Nunito',
             fontWeight: FontWeight.w900,
@@ -359,13 +352,14 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
         ),
         const SizedBox(height: 4),
         Text(
-          reward.desc,
+          widget.drop.itemDescription,
           style: const TextStyle(
             fontFamily: 'Nunito',
             fontSize: 13,
             color: Color(0xB3FFFFFF),
             fontWeight: FontWeight.w600,
           ),
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16),
         Row(
@@ -405,57 +399,26 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
   }
 }
 
-class _Reward {
-  const _Reward({
-    required this.rarity,
-    required this.color,
-    required this.glow,
-    required this.emoji,
-    required this.label,
-    required this.desc,
-  });
-  final String rarity;
+class _Presentation {
+  const _Presentation({required this.color, required this.glow});
   final Color color;
   final Color glow;
-  final String emoji;
-  final String label;
-  final String desc;
 }
 
-const _rewards = <_Reward>[
-  _Reward(
-    rarity: 'common',
-    color: Color(0xFF9BB3A0),
-    glow: Color(0x999BB3A0),
-    emoji: '🌿',
-    label: 'Grass patch',
-    desc: 'A fresh clump of savanna grass',
-  ),
-  _Reward(
-    rarity: 'rare',
-    color: Color(0xFF3B7EA1),
-    glow: Color(0xB33B7EA1),
-    emoji: '💧',
-    label: 'Water bowl',
-    desc: 'Your buddy drinks happily',
-  ),
-  _Reward(
-    rarity: 'epic',
-    color: Color(0xFFA45BD6),
-    glow: Color(0xCCA45BD6),
-    emoji: '🦓',
-    label: 'Zebra friend',
-    desc: 'New companion unlocked!',
-  ),
-  _Reward(
-    rarity: 'legendary',
-    color: Color(0xFFF4A73E),
-    glow: Color(0xE6F4A73E),
-    emoji: '👑',
-    label: 'Golden mane',
-    desc: 'Legendary cosmetic!',
-  ),
-];
+_Presentation _rarityPresentation(Enum$LootRarity rarity) {
+  switch (rarity) {
+    case Enum$LootRarity.common:
+      return const _Presentation(color: Color(0xFF9BB3A0), glow: Color(0x999BB3A0));
+    case Enum$LootRarity.rare:
+      return const _Presentation(color: Color(0xFF3B7EA1), glow: Color(0xB33B7EA1));
+    case Enum$LootRarity.epic:
+      return const _Presentation(color: Color(0xFFA45BD6), glow: Color(0xCCA45BD6));
+    case Enum$LootRarity.legendary:
+      return const _Presentation(color: Color(0xFFF4A73E), glow: Color(0xE6F4A73E));
+    case Enum$LootRarity.$unknown:
+      return const _Presentation(color: Color(0xFF9BB3A0), glow: Color(0x999BB3A0));
+  }
+}
 
 class _RaysPainter extends CustomPainter {
   _RaysPainter({required this.color});

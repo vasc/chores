@@ -4,16 +4,21 @@ import type {
   ChoreAssignments,
   Chores,
   Households,
+  LootDrops,
   Redemptions,
   Rewards,
+  UserDailyQuests,
   Users,
 } from "../db/generated.ts";
 import {
   ChoreStatusEnum,
+  LootDropStatusEnum,
+  LootRarityEnum,
   RecurrenceEnum,
   RedemptionStatusEnum,
   RoleEnum,
 } from "./enums.ts";
+import { xpToLevel } from "./loot.ts";
 
 export type HouseholdRow = Selectable<Households>;
 export type UserRow = Selectable<Users>;
@@ -21,6 +26,8 @@ export type ChoreRow = Selectable<Chores>;
 export type AssignmentRow = Selectable<ChoreAssignments>;
 export type RewardRow = Selectable<Rewards>;
 export type RedemptionRow = Selectable<Redemptions>;
+export type LootDropRow = Selectable<LootDrops>;
+export type DailyQuestRow = Selectable<UserDailyQuests>;
 
 export const HouseholdRef = builder.objectRef<HouseholdRow>("Household").implement({
   fields: (t) => ({
@@ -38,6 +45,16 @@ export const UserRef = builder.objectRef<UserRow>("User").implement({
     role: t.field({ type: RoleEnum, resolve: (u) => u.role }),
     avatarEmoji: t.exposeString("avatar_emoji"),
     tokenBalance: t.exposeInt("token_balance"),
+    xp: t.exposeInt("xp"),
+    level: t.int({ resolve: (u) => xpToLevel(u.xp).level }),
+    xpIntoLevel: t.int({ resolve: (u) => xpToLevel(u.xp).xpIntoLevel }),
+    xpForNextLevel: t.int({ resolve: (u) => xpToLevel(u.xp).xpForNext }),
+    streakDays: t.exposeInt("streak_days"),
+    streakLastDate: t.field({
+      type: "DateTime",
+      nullable: true,
+      resolve: (u) => u.streak_last_date,
+    }),
     email: t.exposeString("email", { nullable: true }),
     createdAt: t.field({ type: "DateTime", resolve: (u) => u.created_at }),
   }),
@@ -49,6 +66,7 @@ export const ChoreRef = builder.objectRef<ChoreRow>("Chore").implement({
     title: t.exposeString("title"),
     description: t.exposeString("description", { nullable: true }),
     tokenValue: t.exposeInt("token_value"),
+    xpValue: t.exposeInt("xp_value"),
     recurrence: t.field({ type: RecurrenceEnum, resolve: (c) => c.recurrence }),
     archived: t.exposeBoolean("archived"),
     createdAt: t.field({ type: "DateTime", resolve: (c) => c.created_at }),
@@ -87,6 +105,21 @@ export const ChoreAssignmentRef = builder
       }),
       rejectReason: t.exposeString("reject_reason", { nullable: true }),
       createdAt: t.field({ type: "DateTime", resolve: (a) => a.created_at }),
+      combo: t.int({
+        description:
+          "The combo count that will be recorded if/when this assignment is approved. For already-approved assignments, returns the snapshot taken at approval.",
+        resolve: async (a, _args, ctx) => {
+          if (a.status === "approved") return a.combo_at_approval ?? 1;
+          const row = await ctx.db
+            .selectFrom("chore_user_combos")
+            .select(["current_combo", "last_approved_at"])
+            .where("chore_id", "=", a.chore_id)
+            .where("user_id", "=", a.assigned_to_user_id)
+            .executeTakeFirst();
+          if (!row || row.current_combo <= 0 || !row.last_approved_at) return 1;
+          return row.current_combo + 1;
+        },
+      }),
       chore: t.field({
         type: ChoreRef,
         resolve: async (a, _args, ctx) =>
@@ -151,6 +184,94 @@ export const RedemptionRef = builder.objectRef<RedemptionRow>("Redemption").impl
     }),
   }),
 });
+
+export const LootDropRef = builder.objectRef<LootDropRow>("LootDrop").implement({
+  fields: (t) => ({
+    id: t.exposeID("id"),
+    rarity: t.field({ type: LootRarityEnum, resolve: (d) => d.rarity }),
+    status: t.field({ type: LootDropStatusEnum, resolve: (d) => d.status }),
+    isQuestBonus: t.exposeBoolean("is_quest_bonus"),
+    itemEmoji: t.exposeString("item_emoji"),
+    itemLabel: t.exposeString("item_label"),
+    itemDescription: t.exposeString("item_description"),
+    createdAt: t.field({ type: "DateTime", resolve: (d) => d.created_at }),
+    committedAt: t.field({
+      type: "DateTime",
+      nullable: true,
+      resolve: (d) => d.committed_at,
+    }),
+    assignmentId: t.field({
+      type: "UUID",
+      nullable: true,
+      resolve: (d) => d.assignment_id,
+    }),
+  }),
+});
+
+export const DailyQuestRef = builder.objectRef<DailyQuestRow>("DailyQuest").implement({
+  fields: (t) => ({
+    id: t.exposeID("id"),
+    questDate: t.field({ type: "DateTime", resolve: (q) => q.quest_date }),
+    goal: t.exposeInt("goal"),
+    progress: t.exposeInt("progress"),
+    rewardClaimedAt: t.field({
+      type: "DateTime",
+      nullable: true,
+      resolve: (q) => q.reward_claimed_at,
+    }),
+    rewardDrop: t.field({
+      type: LootDropRef,
+      nullable: true,
+      resolve: async (q, _args, ctx) => {
+        if (!q.reward_drop_id) return null;
+        return ctx.db
+          .selectFrom("loot_drops")
+          .selectAll()
+          .where("id", "=", q.reward_drop_id)
+          .executeTakeFirst() ?? null;
+      },
+    }),
+  }),
+});
+
+export type SubmitChorePayload = { assignment: AssignmentRow; lootDrop: LootDropRow };
+
+export const SubmitChorePayloadRef = builder
+  .objectRef<SubmitChorePayload>("SubmitChorePayload")
+  .implement({
+    fields: (t) => ({
+      assignment: t.field({ type: ChoreAssignmentRef, resolve: (p) => p.assignment }),
+      lootDrop: t.field({ type: LootDropRef, resolve: (p) => p.lootDrop }),
+    }),
+  });
+
+export type ApproveChorePayload = {
+  assignment: AssignmentRow;
+  lootDrop: LootDropRow | null;
+  questBonus: LootDropRow | null;
+  quest: DailyQuestRow;
+  user: UserRow;
+};
+
+export const ApproveChorePayloadRef = builder
+  .objectRef<ApproveChorePayload>("ApproveChorePayload")
+  .implement({
+    fields: (t) => ({
+      assignment: t.field({ type: ChoreAssignmentRef, resolve: (p) => p.assignment }),
+      lootDrop: t.field({
+        type: LootDropRef,
+        nullable: true,
+        resolve: (p) => p.lootDrop,
+      }),
+      questBonus: t.field({
+        type: LootDropRef,
+        nullable: true,
+        resolve: (p) => p.questBonus,
+      }),
+      quest: t.field({ type: DailyQuestRef, resolve: (p) => p.quest }),
+      user: t.field({ type: UserRef, resolve: (p) => p.user }),
+    }),
+  });
 
 export const AuthPayloadRef = builder
   .objectRef<{ token: string; user: UserRow }>("AuthPayload")

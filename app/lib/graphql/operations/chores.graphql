@@ -2,12 +2,32 @@ mutation CreateChore(
   $title: String!
   $description: String
   $tokenValue: Int!
+  $xpValue: Int
   $recurrence: Recurrence = one_off
 ) {
   createChore(
     title: $title
     description: $description
     tokenValue: $tokenValue
+    xpValue: $xpValue
+    recurrence: $recurrence
+  ) { ...ChoreFields }
+}
+
+mutation UpdateChore(
+  $id: UUID!
+  $title: String
+  $description: String
+  $tokenValue: Int
+  $xpValue: Int
+  $recurrence: Recurrence
+) {
+  updateChore(
+    id: $id
+    title: $title
+    description: $description
+    tokenValue: $tokenValue
+    xpValue: $xpValue
     recurrence: $recurrence
   ) { ...ChoreFields }
 }
@@ -29,11 +49,20 @@ mutation AssignChore(
 }
 
 mutation SubmitChore($assignmentId: UUID!) {
-  submitChore(assignmentId: $assignmentId) { ...AssignmentFields }
+  submitChore(assignmentId: $assignmentId) {
+    assignment { ...AssignmentFields }
+    lootDrop { ...LootDropFields }
+  }
 }
 
 mutation ApproveChore($assignmentId: UUID!) {
-  approveChore(assignmentId: $assignmentId) { ...AssignmentFields }
+  approveChore(assignmentId: $assignmentId) {
+    assignment { ...AssignmentFields }
+    lootDrop { ...LootDropFields }
+    questBonus { ...LootDropFields }
+    quest { ...DailyQuestFields }
+    user { ...UserFields }
+  }
 }
 
 mutation RejectChore($assignmentId: UUID!, $reason: String) {

@@ -41,6 +41,87 @@ Enum$ChoreStatus fromJson$Enum$ChoreStatus(String value) {
   }
 }
 
+enum Enum$LootDropStatus {
+  committed,
+  pending,
+  voided,
+  $unknown;
+
+  factory Enum$LootDropStatus.fromJson(String value) =>
+      fromJson$Enum$LootDropStatus(value);
+
+  String toJson() => toJson$Enum$LootDropStatus(this);
+}
+
+String toJson$Enum$LootDropStatus(Enum$LootDropStatus e) {
+  switch (e) {
+    case Enum$LootDropStatus.committed:
+      return r'committed';
+    case Enum$LootDropStatus.pending:
+      return r'pending';
+    case Enum$LootDropStatus.voided:
+      return r'voided';
+    case Enum$LootDropStatus.$unknown:
+      return r'$unknown';
+  }
+}
+
+Enum$LootDropStatus fromJson$Enum$LootDropStatus(String value) {
+  switch (value) {
+    case r'committed':
+      return Enum$LootDropStatus.committed;
+    case r'pending':
+      return Enum$LootDropStatus.pending;
+    case r'voided':
+      return Enum$LootDropStatus.voided;
+    default:
+      return Enum$LootDropStatus.$unknown;
+  }
+}
+
+enum Enum$LootRarity {
+  common,
+  epic,
+  legendary,
+  rare,
+  $unknown;
+
+  factory Enum$LootRarity.fromJson(String value) =>
+      fromJson$Enum$LootRarity(value);
+
+  String toJson() => toJson$Enum$LootRarity(this);
+}
+
+String toJson$Enum$LootRarity(Enum$LootRarity e) {
+  switch (e) {
+    case Enum$LootRarity.common:
+      return r'common';
+    case Enum$LootRarity.epic:
+      return r'epic';
+    case Enum$LootRarity.legendary:
+      return r'legendary';
+    case Enum$LootRarity.rare:
+      return r'rare';
+    case Enum$LootRarity.$unknown:
+      return r'$unknown';
+  }
+}
+
+Enum$LootRarity fromJson$Enum$LootRarity(String value) {
+  switch (value) {
+    case r'common':
+      return Enum$LootRarity.common;
+    case r'epic':
+      return Enum$LootRarity.epic;
+    case r'legendary':
+      return Enum$LootRarity.legendary;
+    case r'rare':
+      return Enum$LootRarity.rare;
+    default:
+      return Enum$LootRarity.$unknown;
+  }
+}
+
 enum Enum$Recurrence {
   daily,
   one_off,

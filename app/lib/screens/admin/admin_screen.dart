@@ -115,7 +115,7 @@ class _ChoreAdminTile extends ConsumerWidget {
         children: [
           ListTile(
             title: Text(chore.title),
-            subtitle: Text('${chore.tokenValue} 🪙 · ${chore.recurrence.name}'),
+            subtitle: Text('${chore.tokenValue} 🪙 · ${chore.xpValue} XP · ${chore.recurrence.name}'),
             trailing: IconButton(
               icon: const Icon(Icons.archive_outlined),
               tooltip: 'Archive',
@@ -162,6 +162,7 @@ class _ChoreFormState extends ConsumerState<_ChoreForm> {
   final _title = TextEditingController();
   final _desc = TextEditingController();
   final _tokens = TextEditingController(text: '5');
+  final _xp = TextEditingController(text: '20');
   Enum$Recurrence _recurrence = Enum$Recurrence.one_off;
   bool _busy = false;
   String? _error;
@@ -178,6 +179,7 @@ class _ChoreFormState extends ConsumerState<_ChoreForm> {
             title: _title.text.trim(),
             description: _desc.text.trim().isEmpty ? null : _desc.text.trim(),
             tokenValue: int.parse(_tokens.text),
+            xpValue: int.parse(_xp.text),
             recurrence: _recurrence,
           ).toJson(),
         ));
@@ -217,11 +219,28 @@ class _ChoreFormState extends ConsumerState<_ChoreForm> {
               controller: _desc,
               decoration: const InputDecoration(labelText: 'Description (optional)'),
             ),
-            TextFormField(
-              controller: _tokens,
-              decoration: const InputDecoration(labelText: 'Token reward'),
-              keyboardType: TextInputType.number,
-              validator: (v) => int.tryParse(v ?? '') == null ? 'Number' : null,
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _tokens,
+                    decoration: const InputDecoration(labelText: 'Tokens'),
+                    keyboardType: TextInputType.number,
+                    validator: (v) =>
+                        (int.tryParse(v ?? '') == null || int.parse(v!) < 0) ? 'Number' : null,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextFormField(
+                    controller: _xp,
+                    decoration: const InputDecoration(labelText: 'XP'),
+                    keyboardType: TextInputType.number,
+                    validator: (v) =>
+                        (int.tryParse(v ?? '') == null || int.parse(v!) < 0) ? 'Number' : null,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<Enum$Recurrence>(

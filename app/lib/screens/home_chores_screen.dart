@@ -76,7 +76,6 @@ class HomeChoresScreen extends ConsumerWidget {
             final done = assignments
                 .where((a) => a.status == Enum$ChoreStatus.approved)
                 .toList();
-            final doneCount = done.length;
 
             return RefreshIndicator(
               onRefresh: () async => refetch?.call(),
@@ -88,9 +87,9 @@ class HomeChoresScreen extends ConsumerWidget {
                 children: [
                   _TopBar(me: me, dateLabel: _dateFmt.format(DateTime.now())),
                   const SizedBox(height: 12),
-                  _XpTokenCard(me: me, doneCount: doneCount),
+                  _XpTokenCard(me: me),
                   const SizedBox(height: 16),
-                  _DailyQuestBanner(doneToday: doneCount.clamp(0, 3), goal: 3),
+                  const _DailyQuestBanner(),
                   const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
@@ -181,7 +180,6 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.savanna;
     final mascot = mascotFromEmoji(me.avatarEmoji);
-    final streak = _derivedStreak(me.tokenBalance);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: Row(
@@ -236,7 +234,7 @@ class _TopBar extends StatelessWidget {
               ],
             ),
           ),
-          StreakPill(days: streak),
+          StreakPill(days: me.streakDays),
         ],
       ),
     );
@@ -244,16 +242,12 @@ class _TopBar extends StatelessWidget {
 }
 
 class _XpTokenCard extends StatelessWidget {
-  const _XpTokenCard({required this.me, required this.doneCount});
+  const _XpTokenCard({required this.me});
   final Fragment$UserFields me;
-  final int doneCount;
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.savanna;
-    final level = _derivedLevel(me.tokenBalance);
-    final xpMax = _derivedXpMax(level);
-    final xp = _derivedXp(me.tokenBalance, level);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
@@ -267,7 +261,13 @@ class _XpTokenCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Expanded(child: XpBar(xp: xp, max: xpMax, level: level)),
+            Expanded(
+              child: XpBar(
+                xp: me.xpIntoLevel,
+                max: 100,
+                level: me.level,
+              ),
+            ),
             const SizedBox(width: 14),
             Container(width: 1, height: 36, color: tokens.line),
             const SizedBox(width: 14),
@@ -279,15 +279,42 @@ class _XpTokenCard extends StatelessWidget {
   }
 }
 
-class _DailyQuestBanner extends StatelessWidget {
-  const _DailyQuestBanner({required this.doneToday, required this.goal});
-  final int doneToday;
+class _DailyQuestBanner extends ConsumerWidget {
+  const _DailyQuestBanner();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Query(
+      options: QueryOptions(
+        document: documentNodeQueryTodayQuest,
+        fetchPolicy: FetchPolicy.cacheAndNetwork,
+      ),
+      builder: (result, {refetch, fetchMore}) {
+        final goal = result.data == null
+            ? 3
+            : Query$TodayQuest.fromJson(result.data!).todayQuest.goal;
+        final progress = result.data == null
+            ? 0
+            : Query$TodayQuest.fromJson(result.data!).todayQuest.progress;
+        final claimed = result.data == null
+            ? false
+            : Query$TodayQuest.fromJson(result.data!).todayQuest.rewardClaimedAt != null;
+        return _DailyQuestBannerView(progress: progress, goal: goal, claimed: claimed);
+      },
+    );
+  }
+}
+
+class _DailyQuestBannerView extends StatelessWidget {
+  const _DailyQuestBannerView({required this.progress, required this.goal, required this.claimed});
+  final int progress;
   final int goal;
+  final bool claimed;
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.savanna;
-    final pct = goal == 0 ? 0.0 : (doneToday / goal).clamp(0.0, 1.0);
+    final pct = goal == 0 ? 0.0 : (progress / goal).clamp(0.0, 1.0);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
@@ -365,7 +392,7 @@ class _DailyQuestBanner extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '$doneToday / $goal done',
+                      '$progress / $goal done',
                       style: spaceGrotesk(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -373,7 +400,7 @@ class _DailyQuestBanner extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '+50 XP · 🎁 Loot',
+                      claimed ? '✓ Loot claimed' : '🎁 Mystery loot',
                       style: spaceGrotesk(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -445,21 +472,28 @@ class _ChoreRow extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    Row(
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
                       children: [
                         SavannaChip(
                           label: category,
                           background: style.chip,
                           color: style.ink,
                         ),
-                        if (a.assignedTo.name.isNotEmpty) ...[
-                          const SizedBox(width: 6),
+                        if (a.combo > 1)
+                          SavannaChip(
+                            label: '${a.combo}x',
+                            background: tokens.accent.withValues(alpha: 0.15),
+                            color: tokens.accent,
+                            icon: SavannaIcons.flame(size: 12),
+                          ),
+                        if (a.assignedTo.name.isNotEmpty)
                           SavannaChip(
                             label: a.assignedTo.name,
                             background: const Color(0x143C2814),
                             color: tokens.ink2,
                           ),
-                        ],
                       ],
                     ),
                   ],
@@ -654,17 +688,4 @@ class _BottomTabs extends StatelessWidget {
       ),
     );
   }
-}
-
-// --- Derived game metrics (no backend support yet) ---------------------
-
-int _derivedLevel(int tokens) => (tokens ~/ 60) + 1;
-int _derivedXpMax(int level) => 100 + (level - 1) * 20;
-int _derivedXp(int tokens, int level) => tokens % 60 * 2;
-int _derivedStreak(int tokens) {
-  if (tokens <= 0) return 0;
-  if (tokens < 10) return 2;
-  if (tokens < 40) return 5;
-  if (tokens < 80) return 9;
-  return 12;
 }

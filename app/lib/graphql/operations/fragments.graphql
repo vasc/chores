@@ -5,6 +5,11 @@ fragment UserFields on User {
   role
   avatarEmoji
   tokenBalance
+  xp
+  level
+  xpIntoLevel
+  xpForNextLevel
+  streakDays
   email
 }
 
@@ -13,6 +18,7 @@ fragment ChoreFields on Chore {
   title
   description
   tokenValue
+  xpValue
   recurrence
   archived
   createdAt
@@ -26,6 +32,7 @@ fragment AssignmentFields on ChoreAssignment {
   approvedAt
   rejectReason
   createdAt
+  combo
   chore { ...ChoreFields }
   assignedTo { ...UserFields }
 }
@@ -48,4 +55,26 @@ fragment RedemptionFields on Redemption {
   decisionReason
   reward { ...RewardFields }
   user { ...UserFields }
+}
+
+fragment LootDropFields on LootDrop {
+  id
+  rarity
+  status
+  isQuestBonus
+  itemEmoji
+  itemLabel
+  itemDescription
+  createdAt
+  committedAt
+  assignmentId
+}
+
+fragment DailyQuestFields on DailyQuest {
+  id
+  questDate
+  goal
+  progress
+  rewardClaimedAt
+  rewardDrop { ...LootDropFields }
 }

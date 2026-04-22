@@ -29,7 +29,7 @@ class ChoreDetailScreen extends ConsumerStatefulWidget {
 class _ChoreDetailScreenState extends ConsumerState<ChoreDetailScreen> {
   bool _busy = false;
   String? _error;
-  bool _showLoot = false;
+  Fragment$LootDropFields? _pendingLoot;
   int _lootTokens = 0;
   int _lootXp = 0;
 
@@ -67,16 +67,28 @@ class _ChoreDetailScreenState extends ConsumerState<ChoreDetailScreen> {
 
   Future<void> _submitChore(Fragment$AssignmentFields a) async {
     setState(() {
-      _lootTokens = a.chore.tokenValue;
-      _lootXp = a.chore.tokenValue * 4;
-      _showLoot = true;
+      _busy = true;
+      _error = null;
     });
-    // Kick off the server submit in parallel — we'll still show the animation.
-    unawaitedMutation(
-      ref.read(graphqlClientProvider),
-      document: documentNodeMutationSubmitChore,
-      variables: Variables$Mutation$SubmitChore(assignmentId: widget.assignmentId).toJson(),
-    );
+    final result = await ref.read(graphqlClientProvider).mutate(MutationOptions(
+          document: documentNodeMutationSubmitChore,
+          variables: Variables$Mutation$SubmitChore(assignmentId: widget.assignmentId).toJson(),
+        ));
+    if (!mounted) return;
+    if (result.hasException) {
+      setState(() {
+        _busy = false;
+        _error = prettifyError(result.exception!);
+      });
+      return;
+    }
+    final parsed = Mutation$SubmitChore.fromJson(result.data!);
+    setState(() {
+      _busy = false;
+      _pendingLoot = parsed.submitChore.lootDrop;
+      _lootTokens = a.chore.tokenValue;
+      _lootXp = a.chore.xpValue;
+    });
   }
 
   Future<void> _reject(Fragment$AssignmentFields a) async {
@@ -175,8 +187,12 @@ class _ChoreDetailScreenState extends ConsumerState<ChoreDetailScreen> {
                           children: [
                             _Hero(a: a),
                             const SizedBox(height: 16),
-                            _RewardCards(tokens: a.chore.tokenValue),
+                            _RewardCards(tokens: a.chore.tokenValue, xp: a.chore.xpValue),
                             const SizedBox(height: 12),
+                            if (a.combo > 1) ...[
+                              _ComboBanner(combo: a.combo),
+                              const SizedBox(height: 12),
+                            ],
                             if (a.rejectReason != null && a.rejectReason!.isNotEmpty) ...[
                               _RejectCard(reason: a.rejectReason!),
                               const SizedBox(height: 12),
@@ -292,14 +308,15 @@ class _ChoreDetailScreenState extends ConsumerState<ChoreDetailScreen> {
                   ),
                 ),
               ),
-              if (_showLoot)
+              if (_pendingLoot != null)
                 Positioned.fill(
                   child: LootBoxOverlay(
                     tokens: _lootTokens,
                     xp: _lootXp,
+                    drop: _pendingLoot!,
                     onDone: () {
                       if (!mounted) return;
-                      setState(() => _showLoot = false);
+                      setState(() => _pendingLoot = null);
                       context.pop();
                     },
                   ),
@@ -380,8 +397,9 @@ String _recurrenceLabel(Enum$Recurrence r) => switch (r) {
     };
 
 class _RewardCards extends StatelessWidget {
-  const _RewardCards({required this.tokens});
+  const _RewardCards({required this.tokens, required this.xp});
   final int tokens;
+  final int xp;
 
   @override
   Widget build(BuildContext context) {
@@ -401,13 +419,63 @@ class _RewardCards extends StatelessWidget {
         Expanded(
           child: _RewardCard(
             label: 'XP',
-            value: '+${tokens * 4}',
+            value: '+$xp',
             icon: SavannaIcons.star(size: 26, fill: t.accent),
             background: const Color(0xFFFFE5DC),
             color: t.accent,
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ComboBanner extends StatelessWidget {
+  const _ComboBanner({required this.combo});
+  final int combo;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.savanna;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(context.density.radius),
+        border: Border.all(color: tokens.accent, width: 2, style: BorderStyle.solid),
+      ),
+      child: Row(
+        children: [
+          const Text('🔥', style: TextStyle(fontSize: 28)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Combo ${combo}x bonus!',
+                  style: TextStyle(
+                    fontFamily: 'Nunito',
+                    fontWeight: FontWeight.w800,
+                    fontSize: 14,
+                    color: tokens.ink,
+                  ),
+                ),
+                Text(
+                  'Keep your streak going to stack multipliers',
+                  style: TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 12,
+                    color: tokens.ink2,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -658,14 +726,3 @@ class _RejectCard extends StatelessWidget {
   }
 }
 
-void unawaitedMutation(
-  GraphQLClient client, {
-  required DocumentNode document,
-  required Map<String, dynamic> variables,
-}) {
-  // Fire-and-forget mutation. Errors are logged to the GraphQL client's
-  // exception handler but intentionally not surfaced here — the animation
-  // is the user-visible success signal; the actual state will converge on
-  // the next refetch.
-  client.mutate(MutationOptions(document: document, variables: variables));
-}

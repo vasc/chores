@@ -3,12 +3,15 @@ import { requireAdult, requireViewer } from "../context.ts";
 import {
   ChoreAssignmentRef,
   ChoreRef,
+  DailyQuestRef,
   HouseholdRef,
+  LootDropRef,
   RedemptionRef,
   RewardRef,
   UserRef,
 } from "./types.ts";
 import { ChoreStatusEnum, RedemptionStatusEnum } from "./enums.ts";
+import { utcDateKey } from "./loot.ts";
 
 builder.queryField("me", (t) =>
   t.field({
@@ -209,6 +212,57 @@ builder.queryField("leaderboard", (t) =>
         .where("household_id", "=", v.householdId)
         .where("role", "=", "child")
         .orderBy("token_balance", "desc")
+        .execute();
+    },
+  }),
+);
+
+builder.queryField("todayQuest", (t) =>
+  t.field({
+    type: DailyQuestRef,
+    authScopes: { authenticated: true },
+    description: "The viewer's daily-quest row for today (UTC). Lazily created when first inspected.",
+    resolve: async (_root, _args, ctx) => {
+      const v = requireViewer(ctx);
+      const today = utcDateKey();
+      const existing = await ctx.db
+        .selectFrom("user_daily_quests")
+        .selectAll()
+        .where("user_id", "=", v.userId)
+        .where("quest_date", "=", today)
+        .executeTakeFirst();
+      if (existing) return existing;
+      return ctx.db
+        .insertInto("user_daily_quests")
+        .values({
+          user_id: v.userId,
+          quest_date: today,
+          goal: 3,
+          progress: 0,
+        })
+        .returningAll()
+        .executeTakeFirstOrThrow();
+    },
+  }),
+);
+
+builder.queryField("myLootDrops", (t) =>
+  t.field({
+    type: [LootDropRef],
+    authScopes: { authenticated: true },
+    args: {
+      limit: t.arg.int({ defaultValue: 50 }),
+    },
+    resolve: async (_root, args, ctx) => {
+      const v = requireViewer(ctx);
+      const limit = Math.min(Math.max(args.limit ?? 50, 1), 200);
+      return ctx.db
+        .selectFrom("loot_drops")
+        .selectAll()
+        .where("user_id", "=", v.userId)
+        .where("status", "in", ["pending", "committed"])
+        .orderBy("created_at", "desc")
+        .limit(limit)
         .execute();
     },
   }),

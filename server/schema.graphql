@@ -1,3 +1,11 @@
+type ApproveChorePayload {
+  assignment: ChoreAssignment!
+  lootDrop: LootDrop
+  quest: DailyQuest!
+  questBonus: LootDrop
+  user: User!
+}
+
 type AuthPayload {
   token: String!
   user: User!
@@ -12,12 +20,18 @@ type Chore {
   recurrence: Recurrence!
   title: String!
   tokenValue: Int!
+  xpValue: Int!
 }
 
 type ChoreAssignment {
   approvedAt: DateTime
   assignedTo: User!
   chore: Chore!
+
+  """
+  The combo count that will be recorded if/when this assignment is approved. For already-approved assignments, returns the snapshot taken at approval.
+  """
+  combo: Int!
   createdAt: DateTime!
   dueDate: DateTime
   id: ID!
@@ -33,6 +47,15 @@ enum ChoreStatus {
   submitted
 }
 
+type DailyQuest {
+  goal: Int!
+  id: ID!
+  progress: Int!
+  questDate: DateTime!
+  rewardClaimedAt: DateTime
+  rewardDrop: LootDrop
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -44,15 +67,41 @@ type Household {
   name: String!
 }
 
+type LootDrop {
+  assignmentId: UUID
+  committedAt: DateTime
+  createdAt: DateTime!
+  id: ID!
+  isQuestBonus: Boolean!
+  itemDescription: String!
+  itemEmoji: String!
+  itemLabel: String!
+  rarity: LootRarity!
+  status: LootDropStatus!
+}
+
+enum LootDropStatus {
+  committed
+  pending
+  voided
+}
+
+enum LootRarity {
+  common
+  epic
+  legendary
+  rare
+}
+
 type Mutation {
   addAdult(email: String!, name: String!, password: String!): User!
   addChild(avatarEmoji: String, name: String!, pin: String!): User!
-  approveChore(assignmentId: UUID!): ChoreAssignment!
+  approveChore(assignmentId: UUID!): ApproveChorePayload!
   approveRedemption(id: UUID!): Redemption!
   archiveChore(id: UUID!): Chore!
   archiveReward(id: UUID!): Reward!
   assignChore(assignedToUserId: UUID!, choreId: UUID!, dueDate: DateTime): ChoreAssignment!
-  createChore(description: String, recurrence: Recurrence = one_off, title: String!, tokenValue: Int!): Chore!
+  createChore(description: String, recurrence: Recurrence = one_off, title: String!, tokenValue: Int!, xpValue: Int): Chore!
   createReward(description: String, title: String!, tokenCost: Int!): Reward!
   denyRedemption(id: UUID!, reason: String): Redemption!
   fulfillRedemption(id: UUID!): Redemption!
@@ -61,9 +110,9 @@ type Mutation {
   rejectChore(assignmentId: UUID!, reason: String): ChoreAssignment!
   requestRedemption(rewardId: UUID!): Redemption!
   signUpHousehold(adultName: String!, email: String!, householdName: String!, password: String!): AuthPayload!
-  submitChore(assignmentId: UUID!): ChoreAssignment!
+  submitChore(assignmentId: UUID!): SubmitChorePayload!
   updateChildPin(newPin: String!, userId: UUID!): User!
-  updateChore(description: String, id: UUID!, recurrence: Recurrence, title: String, tokenValue: Int): Chore!
+  updateChore(description: String, id: UUID!, recurrence: Recurrence, title: String, tokenValue: Int, xpValue: Int): Chore!
   updateReward(description: String, id: UUID!, title: String, tokenCost: Int): Reward!
 }
 
@@ -77,10 +126,16 @@ type Query {
   leaderboard: [User!]!
   me: User
   members: [User!]!
+  myLootDrops(limit: Int = 50): [LootDrop!]!
   pendingApprovals: [ChoreAssignment!]!
   pendingRedemptions: [Redemption!]!
   redemptions(mineOnly: Boolean = false, status: RedemptionStatus): [Redemption!]!
   rewards(includeArchived: Boolean = false): [Reward!]!
+
+  """
+  The viewer's daily-quest row for today (UTC). Lazily created when first inspected.
+  """
+  todayQuest: DailyQuest!
 }
 
 enum Recurrence {
@@ -121,6 +176,11 @@ enum Role {
   child
 }
 
+type SubmitChorePayload {
+  assignment: ChoreAssignment!
+  lootDrop: LootDrop!
+}
+
 scalar UUID
 
 type User {
@@ -129,7 +189,13 @@ type User {
   email: String
   householdId: UUID!
   id: ID!
+  level: Int!
   name: String!
   role: Role!
+  streakDays: Int!
+  streakLastDate: DateTime
   tokenBalance: Int!
+  xp: Int!
+  xpForNextLevel: Int!
+  xpIntoLevel: Int!
 }

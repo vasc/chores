@@ -11,6 +11,10 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
+export type LootDropStatus = "committed" | "pending" | "voided";
+
+export type LootRarity = "common" | "epic" | "legendary" | "rare";
+
 export type RecurrenceType = "daily" | "one_off" | "weekly";
 
 export type RedemptionStatus = "approved" | "denied" | "fulfilled" | "requested";
@@ -24,12 +28,21 @@ export interface ChoreAssignments {
   approved_by_user_id: string | null;
   assigned_to_user_id: string;
   chore_id: string;
+  combo_at_approval: number | null;
   created_at: Generated<Timestamp>;
   due_date: Timestamp | null;
   id: Generated<string>;
   reject_reason: string | null;
   status: Generated<ChoreStatus>;
   submitted_at: Timestamp | null;
+}
+
+export interface ChoreUserCombos {
+  chore_id: string;
+  current_combo: Generated<number>;
+  last_approved_at: Timestamp | null;
+  updated_at: Generated<Timestamp>;
+  user_id: string;
 }
 
 export interface Chores {
@@ -42,12 +55,27 @@ export interface Chores {
   recurrence: Generated<RecurrenceType>;
   title: string;
   token_value: number;
+  xp_value: Generated<number>;
 }
 
 export interface Households {
   created_at: Generated<Timestamp>;
   id: Generated<string>;
   name: string;
+}
+
+export interface LootDrops {
+  assignment_id: string | null;
+  committed_at: Timestamp | null;
+  created_at: Generated<Timestamp>;
+  id: Generated<string>;
+  is_quest_bonus: Generated<boolean>;
+  item_description: string;
+  item_emoji: string;
+  item_label: string;
+  rarity: LootRarity;
+  status: Generated<LootDropStatus>;
+  user_id: string;
 }
 
 export interface Redemptions {
@@ -73,6 +101,17 @@ export interface Rewards {
   token_cost: number;
 }
 
+export interface UserDailyQuests {
+  created_at: Generated<Timestamp>;
+  goal: Generated<number>;
+  id: Generated<string>;
+  progress: Generated<number>;
+  quest_date: Timestamp;
+  reward_claimed_at: Timestamp | null;
+  reward_drop_id: string | null;
+  user_id: string;
+}
+
 export interface Users {
   avatar_emoji: Generated<string>;
   created_at: Generated<Timestamp>;
@@ -83,14 +122,20 @@ export interface Users {
   password_hash: string | null;
   pin_hash: string | null;
   role: UserRole;
+  streak_days: Generated<number>;
+  streak_last_date: Timestamp | null;
   token_balance: Generated<number>;
+  xp: Generated<number>;
 }
 
 export interface DB {
   chore_assignments: ChoreAssignments;
+  chore_user_combos: ChoreUserCombos;
   chores: Chores;
   households: Households;
+  loot_drops: LootDrops;
   redemptions: Redemptions;
   rewards: Rewards;
+  user_daily_quests: UserDailyQuests;
   users: Users;
 }

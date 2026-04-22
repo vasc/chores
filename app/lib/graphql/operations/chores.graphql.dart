@@ -8,12 +8,14 @@ class Variables$Mutation$CreateChore {
     required String title,
     String? description,
     required int tokenValue,
+    int? xpValue,
     Enum$Recurrence? recurrence,
   }) =>
       Variables$Mutation$CreateChore._({
         r'title': title,
         if (description != null) r'description': description,
         r'tokenValue': tokenValue,
+        if (xpValue != null) r'xpValue': xpValue,
         if (recurrence != null) r'recurrence': recurrence,
       });
 
@@ -29,6 +31,10 @@ class Variables$Mutation$CreateChore {
     }
     final l$tokenValue = data['tokenValue'];
     result$data['tokenValue'] = (l$tokenValue as int);
+    if (data.containsKey('xpValue')) {
+      final l$xpValue = data['xpValue'];
+      result$data['xpValue'] = (l$xpValue as int?);
+    }
     if (data.containsKey('recurrence')) {
       final l$recurrence = data['recurrence'];
       result$data['recurrence'] = l$recurrence == null
@@ -46,6 +52,8 @@ class Variables$Mutation$CreateChore {
 
   int get tokenValue => (_$data['tokenValue'] as int);
 
+  int? get xpValue => (_$data['xpValue'] as int?);
+
   Enum$Recurrence? get recurrence => (_$data['recurrence'] as Enum$Recurrence?);
 
   Map<String, dynamic> toJson() {
@@ -58,6 +66,10 @@ class Variables$Mutation$CreateChore {
     }
     final l$tokenValue = tokenValue;
     result$data['tokenValue'] = l$tokenValue;
+    if (_$data.containsKey('xpValue')) {
+      final l$xpValue = xpValue;
+      result$data['xpValue'] = l$xpValue;
+    }
     if (_$data.containsKey('recurrence')) {
       final l$recurrence = recurrence;
       result$data['recurrence'] =
@@ -100,6 +112,14 @@ class Variables$Mutation$CreateChore {
     if (l$tokenValue != lOther$tokenValue) {
       return false;
     }
+    final l$xpValue = xpValue;
+    final lOther$xpValue = other.xpValue;
+    if (_$data.containsKey('xpValue') != other._$data.containsKey('xpValue')) {
+      return false;
+    }
+    if (l$xpValue != lOther$xpValue) {
+      return false;
+    }
     final l$recurrence = recurrence;
     final lOther$recurrence = other.recurrence;
     if (_$data.containsKey('recurrence') !=
@@ -117,11 +137,13 @@ class Variables$Mutation$CreateChore {
     final l$title = title;
     final l$description = description;
     final l$tokenValue = tokenValue;
+    final l$xpValue = xpValue;
     final l$recurrence = recurrence;
     return Object.hashAll([
       l$title,
       _$data.containsKey('description') ? l$description : const {},
       l$tokenValue,
+      _$data.containsKey('xpValue') ? l$xpValue : const {},
       _$data.containsKey('recurrence') ? l$recurrence : const {},
     ]);
   }
@@ -140,6 +162,7 @@ abstract class CopyWith$Variables$Mutation$CreateChore<TRes> {
     String? title,
     String? description,
     int? tokenValue,
+    int? xpValue,
     Enum$Recurrence? recurrence,
   });
 }
@@ -161,6 +184,7 @@ class _CopyWithImpl$Variables$Mutation$CreateChore<TRes>
     Object? title = _undefined,
     Object? description = _undefined,
     Object? tokenValue = _undefined,
+    Object? xpValue = _undefined,
     Object? recurrence = _undefined,
   }) =>
       _then(Variables$Mutation$CreateChore._({
@@ -169,6 +193,7 @@ class _CopyWithImpl$Variables$Mutation$CreateChore<TRes>
         if (description != _undefined) 'description': (description as String?),
         if (tokenValue != _undefined && tokenValue != null)
           'tokenValue': (tokenValue as int),
+        if (xpValue != _undefined) 'xpValue': (xpValue as int?),
         if (recurrence != _undefined)
           'recurrence': (recurrence as Enum$Recurrence?),
       }));
@@ -184,6 +209,7 @@ class _CopyWithStubImpl$Variables$Mutation$CreateChore<TRes>
     String? title,
     String? description,
     int? tokenValue,
+    int? xpValue,
     Enum$Recurrence? recurrence,
   }) =>
       _res;
@@ -356,6 +382,15 @@ const documentNodeMutationCreateChore = DocumentNode(definitions: [
         directives: [],
       ),
       VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'xpValue')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'Int'),
+          isNonNull: false,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      ),
+      VariableDefinitionNode(
         variable: VariableNode(name: NameNode(value: 'recurrence')),
         type: NamedTypeNode(
           name: NameNode(value: 'Recurrence'),
@@ -383,6 +418,507 @@ const documentNodeMutationCreateChore = DocumentNode(definitions: [
           ArgumentNode(
             name: NameNode(value: 'tokenValue'),
             value: VariableNode(name: NameNode(value: 'tokenValue')),
+          ),
+          ArgumentNode(
+            name: NameNode(value: 'xpValue'),
+            value: VariableNode(name: NameNode(value: 'xpValue')),
+          ),
+          ArgumentNode(
+            name: NameNode(value: 'recurrence'),
+            value: VariableNode(name: NameNode(value: 'recurrence')),
+          ),
+        ],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FragmentSpreadNode(
+            name: NameNode(value: 'ChoreFields'),
+            directives: [],
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
+      ),
+      FieldNode(
+        name: NameNode(value: '__typename'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+    ]),
+  ),
+  fragmentDefinitionChoreFields,
+]);
+
+class Variables$Mutation$UpdateChore {
+  factory Variables$Mutation$UpdateChore({
+    required String id,
+    String? title,
+    String? description,
+    int? tokenValue,
+    int? xpValue,
+    Enum$Recurrence? recurrence,
+  }) =>
+      Variables$Mutation$UpdateChore._({
+        r'id': id,
+        if (title != null) r'title': title,
+        if (description != null) r'description': description,
+        if (tokenValue != null) r'tokenValue': tokenValue,
+        if (xpValue != null) r'xpValue': xpValue,
+        if (recurrence != null) r'recurrence': recurrence,
+      });
+
+  Variables$Mutation$UpdateChore._(this._$data);
+
+  factory Variables$Mutation$UpdateChore.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$id = data['id'];
+    result$data['id'] = (l$id as String);
+    if (data.containsKey('title')) {
+      final l$title = data['title'];
+      result$data['title'] = (l$title as String?);
+    }
+    if (data.containsKey('description')) {
+      final l$description = data['description'];
+      result$data['description'] = (l$description as String?);
+    }
+    if (data.containsKey('tokenValue')) {
+      final l$tokenValue = data['tokenValue'];
+      result$data['tokenValue'] = (l$tokenValue as int?);
+    }
+    if (data.containsKey('xpValue')) {
+      final l$xpValue = data['xpValue'];
+      result$data['xpValue'] = (l$xpValue as int?);
+    }
+    if (data.containsKey('recurrence')) {
+      final l$recurrence = data['recurrence'];
+      result$data['recurrence'] = l$recurrence == null
+          ? null
+          : fromJson$Enum$Recurrence((l$recurrence as String));
+    }
+    return Variables$Mutation$UpdateChore._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get id => (_$data['id'] as String);
+
+  String? get title => (_$data['title'] as String?);
+
+  String? get description => (_$data['description'] as String?);
+
+  int? get tokenValue => (_$data['tokenValue'] as int?);
+
+  int? get xpValue => (_$data['xpValue'] as int?);
+
+  Enum$Recurrence? get recurrence => (_$data['recurrence'] as Enum$Recurrence?);
+
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$id = id;
+    result$data['id'] = l$id;
+    if (_$data.containsKey('title')) {
+      final l$title = title;
+      result$data['title'] = l$title;
+    }
+    if (_$data.containsKey('description')) {
+      final l$description = description;
+      result$data['description'] = l$description;
+    }
+    if (_$data.containsKey('tokenValue')) {
+      final l$tokenValue = tokenValue;
+      result$data['tokenValue'] = l$tokenValue;
+    }
+    if (_$data.containsKey('xpValue')) {
+      final l$xpValue = xpValue;
+      result$data['xpValue'] = l$xpValue;
+    }
+    if (_$data.containsKey('recurrence')) {
+      final l$recurrence = recurrence;
+      result$data['recurrence'] =
+          l$recurrence == null ? null : toJson$Enum$Recurrence(l$recurrence);
+    }
+    return result$data;
+  }
+
+  CopyWith$Variables$Mutation$UpdateChore<Variables$Mutation$UpdateChore>
+      get copyWith => CopyWith$Variables$Mutation$UpdateChore(
+            this,
+            (i) => i,
+          );
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Variables$Mutation$UpdateChore) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    final l$title = title;
+    final lOther$title = other.title;
+    if (_$data.containsKey('title') != other._$data.containsKey('title')) {
+      return false;
+    }
+    if (l$title != lOther$title) {
+      return false;
+    }
+    final l$description = description;
+    final lOther$description = other.description;
+    if (_$data.containsKey('description') !=
+        other._$data.containsKey('description')) {
+      return false;
+    }
+    if (l$description != lOther$description) {
+      return false;
+    }
+    final l$tokenValue = tokenValue;
+    final lOther$tokenValue = other.tokenValue;
+    if (_$data.containsKey('tokenValue') !=
+        other._$data.containsKey('tokenValue')) {
+      return false;
+    }
+    if (l$tokenValue != lOther$tokenValue) {
+      return false;
+    }
+    final l$xpValue = xpValue;
+    final lOther$xpValue = other.xpValue;
+    if (_$data.containsKey('xpValue') != other._$data.containsKey('xpValue')) {
+      return false;
+    }
+    if (l$xpValue != lOther$xpValue) {
+      return false;
+    }
+    final l$recurrence = recurrence;
+    final lOther$recurrence = other.recurrence;
+    if (_$data.containsKey('recurrence') !=
+        other._$data.containsKey('recurrence')) {
+      return false;
+    }
+    if (l$recurrence != lOther$recurrence) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    final l$title = title;
+    final l$description = description;
+    final l$tokenValue = tokenValue;
+    final l$xpValue = xpValue;
+    final l$recurrence = recurrence;
+    return Object.hashAll([
+      l$id,
+      _$data.containsKey('title') ? l$title : const {},
+      _$data.containsKey('description') ? l$description : const {},
+      _$data.containsKey('tokenValue') ? l$tokenValue : const {},
+      _$data.containsKey('xpValue') ? l$xpValue : const {},
+      _$data.containsKey('recurrence') ? l$recurrence : const {},
+    ]);
+  }
+}
+
+abstract class CopyWith$Variables$Mutation$UpdateChore<TRes> {
+  factory CopyWith$Variables$Mutation$UpdateChore(
+    Variables$Mutation$UpdateChore instance,
+    TRes Function(Variables$Mutation$UpdateChore) then,
+  ) = _CopyWithImpl$Variables$Mutation$UpdateChore;
+
+  factory CopyWith$Variables$Mutation$UpdateChore.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Mutation$UpdateChore;
+
+  TRes call({
+    String? id,
+    String? title,
+    String? description,
+    int? tokenValue,
+    int? xpValue,
+    Enum$Recurrence? recurrence,
+  });
+}
+
+class _CopyWithImpl$Variables$Mutation$UpdateChore<TRes>
+    implements CopyWith$Variables$Mutation$UpdateChore<TRes> {
+  _CopyWithImpl$Variables$Mutation$UpdateChore(
+    this._instance,
+    this._then,
+  );
+
+  final Variables$Mutation$UpdateChore _instance;
+
+  final TRes Function(Variables$Mutation$UpdateChore) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? id = _undefined,
+    Object? title = _undefined,
+    Object? description = _undefined,
+    Object? tokenValue = _undefined,
+    Object? xpValue = _undefined,
+    Object? recurrence = _undefined,
+  }) =>
+      _then(Variables$Mutation$UpdateChore._({
+        ..._instance._$data,
+        if (id != _undefined && id != null) 'id': (id as String),
+        if (title != _undefined) 'title': (title as String?),
+        if (description != _undefined) 'description': (description as String?),
+        if (tokenValue != _undefined) 'tokenValue': (tokenValue as int?),
+        if (xpValue != _undefined) 'xpValue': (xpValue as int?),
+        if (recurrence != _undefined)
+          'recurrence': (recurrence as Enum$Recurrence?),
+      }));
+}
+
+class _CopyWithStubImpl$Variables$Mutation$UpdateChore<TRes>
+    implements CopyWith$Variables$Mutation$UpdateChore<TRes> {
+  _CopyWithStubImpl$Variables$Mutation$UpdateChore(this._res);
+
+  TRes _res;
+
+  call({
+    String? id,
+    String? title,
+    String? description,
+    int? tokenValue,
+    int? xpValue,
+    Enum$Recurrence? recurrence,
+  }) =>
+      _res;
+}
+
+class Mutation$UpdateChore {
+  Mutation$UpdateChore({
+    required this.updateChore,
+    this.$__typename = 'Mutation',
+  });
+
+  factory Mutation$UpdateChore.fromJson(Map<String, dynamic> json) {
+    final l$updateChore = json['updateChore'];
+    final l$$__typename = json['__typename'];
+    return Mutation$UpdateChore(
+      updateChore: Fragment$ChoreFields.fromJson(
+          (l$updateChore as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Fragment$ChoreFields updateChore;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$updateChore = updateChore;
+    _resultData['updateChore'] = l$updateChore.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$updateChore = updateChore;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$updateChore,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$UpdateChore) || runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$updateChore = updateChore;
+    final lOther$updateChore = other.updateChore;
+    if (l$updateChore != lOther$updateChore) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$UpdateChore on Mutation$UpdateChore {
+  CopyWith$Mutation$UpdateChore<Mutation$UpdateChore> get copyWith =>
+      CopyWith$Mutation$UpdateChore(
+        this,
+        (i) => i,
+      );
+}
+
+abstract class CopyWith$Mutation$UpdateChore<TRes> {
+  factory CopyWith$Mutation$UpdateChore(
+    Mutation$UpdateChore instance,
+    TRes Function(Mutation$UpdateChore) then,
+  ) = _CopyWithImpl$Mutation$UpdateChore;
+
+  factory CopyWith$Mutation$UpdateChore.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$UpdateChore;
+
+  TRes call({
+    Fragment$ChoreFields? updateChore,
+    String? $__typename,
+  });
+  CopyWith$Fragment$ChoreFields<TRes> get updateChore;
+}
+
+class _CopyWithImpl$Mutation$UpdateChore<TRes>
+    implements CopyWith$Mutation$UpdateChore<TRes> {
+  _CopyWithImpl$Mutation$UpdateChore(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$UpdateChore _instance;
+
+  final TRes Function(Mutation$UpdateChore) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? updateChore = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$UpdateChore(
+        updateChore: updateChore == _undefined || updateChore == null
+            ? _instance.updateChore
+            : (updateChore as Fragment$ChoreFields),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+
+  CopyWith$Fragment$ChoreFields<TRes> get updateChore {
+    final local$updateChore = _instance.updateChore;
+    return CopyWith$Fragment$ChoreFields(
+        local$updateChore, (e) => call(updateChore: e));
+  }
+}
+
+class _CopyWithStubImpl$Mutation$UpdateChore<TRes>
+    implements CopyWith$Mutation$UpdateChore<TRes> {
+  _CopyWithStubImpl$Mutation$UpdateChore(this._res);
+
+  TRes _res;
+
+  call({
+    Fragment$ChoreFields? updateChore,
+    String? $__typename,
+  }) =>
+      _res;
+
+  CopyWith$Fragment$ChoreFields<TRes> get updateChore =>
+      CopyWith$Fragment$ChoreFields.stub(_res);
+}
+
+const documentNodeMutationUpdateChore = DocumentNode(definitions: [
+  OperationDefinitionNode(
+    type: OperationType.mutation,
+    name: NameNode(value: 'UpdateChore'),
+    variableDefinitions: [
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'id')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'UUID'),
+          isNonNull: true,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      ),
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'title')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'String'),
+          isNonNull: false,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      ),
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'description')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'String'),
+          isNonNull: false,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      ),
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'tokenValue')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'Int'),
+          isNonNull: false,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      ),
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'xpValue')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'Int'),
+          isNonNull: false,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      ),
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'recurrence')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'Recurrence'),
+          isNonNull: false,
+        ),
+        defaultValue: DefaultValueNode(value: null),
+        directives: [],
+      ),
+    ],
+    directives: [],
+    selectionSet: SelectionSetNode(selections: [
+      FieldNode(
+        name: NameNode(value: 'updateChore'),
+        alias: null,
+        arguments: [
+          ArgumentNode(
+            name: NameNode(value: 'id'),
+            value: VariableNode(name: NameNode(value: 'id')),
+          ),
+          ArgumentNode(
+            name: NameNode(value: 'title'),
+            value: VariableNode(name: NameNode(value: 'title')),
+          ),
+          ArgumentNode(
+            name: NameNode(value: 'description'),
+            value: VariableNode(name: NameNode(value: 'description')),
+          ),
+          ArgumentNode(
+            name: NameNode(value: 'tokenValue'),
+            value: VariableNode(name: NameNode(value: 'tokenValue')),
+          ),
+          ArgumentNode(
+            name: NameNode(value: 'xpValue'),
+            value: VariableNode(name: NameNode(value: 'xpValue')),
           ),
           ArgumentNode(
             name: NameNode(value: 'recurrence'),
@@ -1180,13 +1716,13 @@ class Mutation$SubmitChore {
     final l$submitChore = json['submitChore'];
     final l$$__typename = json['__typename'];
     return Mutation$SubmitChore(
-      submitChore: Fragment$AssignmentFields.fromJson(
+      submitChore: Mutation$SubmitChore$submitChore.fromJson(
           (l$submitChore as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final Fragment$AssignmentFields submitChore;
+  final Mutation$SubmitChore$submitChore submitChore;
 
   final String $__typename;
 
@@ -1249,10 +1785,10 @@ abstract class CopyWith$Mutation$SubmitChore<TRes> {
       _CopyWithStubImpl$Mutation$SubmitChore;
 
   TRes call({
-    Fragment$AssignmentFields? submitChore,
+    Mutation$SubmitChore$submitChore? submitChore,
     String? $__typename,
   });
-  CopyWith$Fragment$AssignmentFields<TRes> get submitChore;
+  CopyWith$Mutation$SubmitChore$submitChore<TRes> get submitChore;
 }
 
 class _CopyWithImpl$Mutation$SubmitChore<TRes>
@@ -1275,15 +1811,15 @@ class _CopyWithImpl$Mutation$SubmitChore<TRes>
       _then(Mutation$SubmitChore(
         submitChore: submitChore == _undefined || submitChore == null
             ? _instance.submitChore
-            : (submitChore as Fragment$AssignmentFields),
+            : (submitChore as Mutation$SubmitChore$submitChore),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
 
-  CopyWith$Fragment$AssignmentFields<TRes> get submitChore {
+  CopyWith$Mutation$SubmitChore$submitChore<TRes> get submitChore {
     final local$submitChore = _instance.submitChore;
-    return CopyWith$Fragment$AssignmentFields(
+    return CopyWith$Mutation$SubmitChore$submitChore(
         local$submitChore, (e) => call(submitChore: e));
   }
 }
@@ -1295,13 +1831,13 @@ class _CopyWithStubImpl$Mutation$SubmitChore<TRes>
   TRes _res;
 
   call({
-    Fragment$AssignmentFields? submitChore,
+    Mutation$SubmitChore$submitChore? submitChore,
     String? $__typename,
   }) =>
       _res;
 
-  CopyWith$Fragment$AssignmentFields<TRes> get submitChore =>
-      CopyWith$Fragment$AssignmentFields.stub(_res);
+  CopyWith$Mutation$SubmitChore$submitChore<TRes> get submitChore =>
+      CopyWith$Mutation$SubmitChore$submitChore.stub(_res);
 }
 
 const documentNodeMutationSubmitChore = DocumentNode(definitions: [
@@ -1332,9 +1868,43 @@ const documentNodeMutationSubmitChore = DocumentNode(definitions: [
         ],
         directives: [],
         selectionSet: SelectionSetNode(selections: [
-          FragmentSpreadNode(
-            name: NameNode(value: 'AssignmentFields'),
+          FieldNode(
+            name: NameNode(value: 'assignment'),
+            alias: null,
+            arguments: [],
             directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                name: NameNode(value: 'AssignmentFields'),
+                directives: [],
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
+          ),
+          FieldNode(
+            name: NameNode(value: 'lootDrop'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                name: NameNode(value: 'LootDropFields'),
+                directives: [],
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
           ),
           FieldNode(
             name: NameNode(value: '__typename'),
@@ -1357,7 +1927,175 @@ const documentNodeMutationSubmitChore = DocumentNode(definitions: [
   fragmentDefinitionAssignmentFields,
   fragmentDefinitionChoreFields,
   fragmentDefinitionUserFields,
+  fragmentDefinitionLootDropFields,
 ]);
+
+class Mutation$SubmitChore$submitChore {
+  Mutation$SubmitChore$submitChore({
+    required this.assignment,
+    required this.lootDrop,
+    this.$__typename = 'SubmitChorePayload',
+  });
+
+  factory Mutation$SubmitChore$submitChore.fromJson(Map<String, dynamic> json) {
+    final l$assignment = json['assignment'];
+    final l$lootDrop = json['lootDrop'];
+    final l$$__typename = json['__typename'];
+    return Mutation$SubmitChore$submitChore(
+      assignment: Fragment$AssignmentFields.fromJson(
+          (l$assignment as Map<String, dynamic>)),
+      lootDrop: Fragment$LootDropFields.fromJson(
+          (l$lootDrop as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Fragment$AssignmentFields assignment;
+
+  final Fragment$LootDropFields lootDrop;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$assignment = assignment;
+    _resultData['assignment'] = l$assignment.toJson();
+    final l$lootDrop = lootDrop;
+    _resultData['lootDrop'] = l$lootDrop.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$assignment = assignment;
+    final l$lootDrop = lootDrop;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$assignment,
+      l$lootDrop,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$SubmitChore$submitChore) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$assignment = assignment;
+    final lOther$assignment = other.assignment;
+    if (l$assignment != lOther$assignment) {
+      return false;
+    }
+    final l$lootDrop = lootDrop;
+    final lOther$lootDrop = other.lootDrop;
+    if (l$lootDrop != lOther$lootDrop) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$SubmitChore$submitChore
+    on Mutation$SubmitChore$submitChore {
+  CopyWith$Mutation$SubmitChore$submitChore<Mutation$SubmitChore$submitChore>
+      get copyWith => CopyWith$Mutation$SubmitChore$submitChore(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$SubmitChore$submitChore<TRes> {
+  factory CopyWith$Mutation$SubmitChore$submitChore(
+    Mutation$SubmitChore$submitChore instance,
+    TRes Function(Mutation$SubmitChore$submitChore) then,
+  ) = _CopyWithImpl$Mutation$SubmitChore$submitChore;
+
+  factory CopyWith$Mutation$SubmitChore$submitChore.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$SubmitChore$submitChore;
+
+  TRes call({
+    Fragment$AssignmentFields? assignment,
+    Fragment$LootDropFields? lootDrop,
+    String? $__typename,
+  });
+  CopyWith$Fragment$AssignmentFields<TRes> get assignment;
+  CopyWith$Fragment$LootDropFields<TRes> get lootDrop;
+}
+
+class _CopyWithImpl$Mutation$SubmitChore$submitChore<TRes>
+    implements CopyWith$Mutation$SubmitChore$submitChore<TRes> {
+  _CopyWithImpl$Mutation$SubmitChore$submitChore(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$SubmitChore$submitChore _instance;
+
+  final TRes Function(Mutation$SubmitChore$submitChore) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? assignment = _undefined,
+    Object? lootDrop = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$SubmitChore$submitChore(
+        assignment: assignment == _undefined || assignment == null
+            ? _instance.assignment
+            : (assignment as Fragment$AssignmentFields),
+        lootDrop: lootDrop == _undefined || lootDrop == null
+            ? _instance.lootDrop
+            : (lootDrop as Fragment$LootDropFields),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+
+  CopyWith$Fragment$AssignmentFields<TRes> get assignment {
+    final local$assignment = _instance.assignment;
+    return CopyWith$Fragment$AssignmentFields(
+        local$assignment, (e) => call(assignment: e));
+  }
+
+  CopyWith$Fragment$LootDropFields<TRes> get lootDrop {
+    final local$lootDrop = _instance.lootDrop;
+    return CopyWith$Fragment$LootDropFields(
+        local$lootDrop, (e) => call(lootDrop: e));
+  }
+}
+
+class _CopyWithStubImpl$Mutation$SubmitChore$submitChore<TRes>
+    implements CopyWith$Mutation$SubmitChore$submitChore<TRes> {
+  _CopyWithStubImpl$Mutation$SubmitChore$submitChore(this._res);
+
+  TRes _res;
+
+  call({
+    Fragment$AssignmentFields? assignment,
+    Fragment$LootDropFields? lootDrop,
+    String? $__typename,
+  }) =>
+      _res;
+
+  CopyWith$Fragment$AssignmentFields<TRes> get assignment =>
+      CopyWith$Fragment$AssignmentFields.stub(_res);
+
+  CopyWith$Fragment$LootDropFields<TRes> get lootDrop =>
+      CopyWith$Fragment$LootDropFields.stub(_res);
+}
 
 class Variables$Mutation$ApproveChore {
   factory Variables$Mutation$ApproveChore({required String assignmentId}) =>
@@ -1467,13 +2205,13 @@ class Mutation$ApproveChore {
     final l$approveChore = json['approveChore'];
     final l$$__typename = json['__typename'];
     return Mutation$ApproveChore(
-      approveChore: Fragment$AssignmentFields.fromJson(
+      approveChore: Mutation$ApproveChore$approveChore.fromJson(
           (l$approveChore as Map<String, dynamic>)),
       $__typename: (l$$__typename as String),
     );
   }
 
-  final Fragment$AssignmentFields approveChore;
+  final Mutation$ApproveChore$approveChore approveChore;
 
   final String $__typename;
 
@@ -1536,10 +2274,10 @@ abstract class CopyWith$Mutation$ApproveChore<TRes> {
       _CopyWithStubImpl$Mutation$ApproveChore;
 
   TRes call({
-    Fragment$AssignmentFields? approveChore,
+    Mutation$ApproveChore$approveChore? approveChore,
     String? $__typename,
   });
-  CopyWith$Fragment$AssignmentFields<TRes> get approveChore;
+  CopyWith$Mutation$ApproveChore$approveChore<TRes> get approveChore;
 }
 
 class _CopyWithImpl$Mutation$ApproveChore<TRes>
@@ -1562,15 +2300,15 @@ class _CopyWithImpl$Mutation$ApproveChore<TRes>
       _then(Mutation$ApproveChore(
         approveChore: approveChore == _undefined || approveChore == null
             ? _instance.approveChore
-            : (approveChore as Fragment$AssignmentFields),
+            : (approveChore as Mutation$ApproveChore$approveChore),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
 
-  CopyWith$Fragment$AssignmentFields<TRes> get approveChore {
+  CopyWith$Mutation$ApproveChore$approveChore<TRes> get approveChore {
     final local$approveChore = _instance.approveChore;
-    return CopyWith$Fragment$AssignmentFields(
+    return CopyWith$Mutation$ApproveChore$approveChore(
         local$approveChore, (e) => call(approveChore: e));
   }
 }
@@ -1582,13 +2320,13 @@ class _CopyWithStubImpl$Mutation$ApproveChore<TRes>
   TRes _res;
 
   call({
-    Fragment$AssignmentFields? approveChore,
+    Mutation$ApproveChore$approveChore? approveChore,
     String? $__typename,
   }) =>
       _res;
 
-  CopyWith$Fragment$AssignmentFields<TRes> get approveChore =>
-      CopyWith$Fragment$AssignmentFields.stub(_res);
+  CopyWith$Mutation$ApproveChore$approveChore<TRes> get approveChore =>
+      CopyWith$Mutation$ApproveChore$approveChore.stub(_res);
 }
 
 const documentNodeMutationApproveChore = DocumentNode(definitions: [
@@ -1619,9 +2357,100 @@ const documentNodeMutationApproveChore = DocumentNode(definitions: [
         ],
         directives: [],
         selectionSet: SelectionSetNode(selections: [
-          FragmentSpreadNode(
-            name: NameNode(value: 'AssignmentFields'),
+          FieldNode(
+            name: NameNode(value: 'assignment'),
+            alias: null,
+            arguments: [],
             directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                name: NameNode(value: 'AssignmentFields'),
+                directives: [],
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
+          ),
+          FieldNode(
+            name: NameNode(value: 'lootDrop'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                name: NameNode(value: 'LootDropFields'),
+                directives: [],
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
+          ),
+          FieldNode(
+            name: NameNode(value: 'questBonus'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                name: NameNode(value: 'LootDropFields'),
+                directives: [],
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
+          ),
+          FieldNode(
+            name: NameNode(value: 'quest'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                name: NameNode(value: 'DailyQuestFields'),
+                directives: [],
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
+          ),
+          FieldNode(
+            name: NameNode(value: 'user'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                name: NameNode(value: 'UserFields'),
+                directives: [],
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
           ),
           FieldNode(
             name: NameNode(value: '__typename'),
@@ -1644,7 +2473,277 @@ const documentNodeMutationApproveChore = DocumentNode(definitions: [
   fragmentDefinitionAssignmentFields,
   fragmentDefinitionChoreFields,
   fragmentDefinitionUserFields,
+  fragmentDefinitionLootDropFields,
+  fragmentDefinitionDailyQuestFields,
 ]);
+
+class Mutation$ApproveChore$approveChore {
+  Mutation$ApproveChore$approveChore({
+    required this.assignment,
+    this.lootDrop,
+    this.questBonus,
+    required this.quest,
+    required this.user,
+    this.$__typename = 'ApproveChorePayload',
+  });
+
+  factory Mutation$ApproveChore$approveChore.fromJson(
+      Map<String, dynamic> json) {
+    final l$assignment = json['assignment'];
+    final l$lootDrop = json['lootDrop'];
+    final l$questBonus = json['questBonus'];
+    final l$quest = json['quest'];
+    final l$user = json['user'];
+    final l$$__typename = json['__typename'];
+    return Mutation$ApproveChore$approveChore(
+      assignment: Fragment$AssignmentFields.fromJson(
+          (l$assignment as Map<String, dynamic>)),
+      lootDrop: l$lootDrop == null
+          ? null
+          : Fragment$LootDropFields.fromJson(
+              (l$lootDrop as Map<String, dynamic>)),
+      questBonus: l$questBonus == null
+          ? null
+          : Fragment$LootDropFields.fromJson(
+              (l$questBonus as Map<String, dynamic>)),
+      quest:
+          Fragment$DailyQuestFields.fromJson((l$quest as Map<String, dynamic>)),
+      user: Fragment$UserFields.fromJson((l$user as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Fragment$AssignmentFields assignment;
+
+  final Fragment$LootDropFields? lootDrop;
+
+  final Fragment$LootDropFields? questBonus;
+
+  final Fragment$DailyQuestFields quest;
+
+  final Fragment$UserFields user;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$assignment = assignment;
+    _resultData['assignment'] = l$assignment.toJson();
+    final l$lootDrop = lootDrop;
+    _resultData['lootDrop'] = l$lootDrop?.toJson();
+    final l$questBonus = questBonus;
+    _resultData['questBonus'] = l$questBonus?.toJson();
+    final l$quest = quest;
+    _resultData['quest'] = l$quest.toJson();
+    final l$user = user;
+    _resultData['user'] = l$user.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$assignment = assignment;
+    final l$lootDrop = lootDrop;
+    final l$questBonus = questBonus;
+    final l$quest = quest;
+    final l$user = user;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$assignment,
+      l$lootDrop,
+      l$questBonus,
+      l$quest,
+      l$user,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Mutation$ApproveChore$approveChore) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$assignment = assignment;
+    final lOther$assignment = other.assignment;
+    if (l$assignment != lOther$assignment) {
+      return false;
+    }
+    final l$lootDrop = lootDrop;
+    final lOther$lootDrop = other.lootDrop;
+    if (l$lootDrop != lOther$lootDrop) {
+      return false;
+    }
+    final l$questBonus = questBonus;
+    final lOther$questBonus = other.questBonus;
+    if (l$questBonus != lOther$questBonus) {
+      return false;
+    }
+    final l$quest = quest;
+    final lOther$quest = other.quest;
+    if (l$quest != lOther$quest) {
+      return false;
+    }
+    final l$user = user;
+    final lOther$user = other.user;
+    if (l$user != lOther$user) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$ApproveChore$approveChore
+    on Mutation$ApproveChore$approveChore {
+  CopyWith$Mutation$ApproveChore$approveChore<
+          Mutation$ApproveChore$approveChore>
+      get copyWith => CopyWith$Mutation$ApproveChore$approveChore(
+            this,
+            (i) => i,
+          );
+}
+
+abstract class CopyWith$Mutation$ApproveChore$approveChore<TRes> {
+  factory CopyWith$Mutation$ApproveChore$approveChore(
+    Mutation$ApproveChore$approveChore instance,
+    TRes Function(Mutation$ApproveChore$approveChore) then,
+  ) = _CopyWithImpl$Mutation$ApproveChore$approveChore;
+
+  factory CopyWith$Mutation$ApproveChore$approveChore.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$ApproveChore$approveChore;
+
+  TRes call({
+    Fragment$AssignmentFields? assignment,
+    Fragment$LootDropFields? lootDrop,
+    Fragment$LootDropFields? questBonus,
+    Fragment$DailyQuestFields? quest,
+    Fragment$UserFields? user,
+    String? $__typename,
+  });
+  CopyWith$Fragment$AssignmentFields<TRes> get assignment;
+  CopyWith$Fragment$LootDropFields<TRes> get lootDrop;
+  CopyWith$Fragment$LootDropFields<TRes> get questBonus;
+  CopyWith$Fragment$DailyQuestFields<TRes> get quest;
+  CopyWith$Fragment$UserFields<TRes> get user;
+}
+
+class _CopyWithImpl$Mutation$ApproveChore$approveChore<TRes>
+    implements CopyWith$Mutation$ApproveChore$approveChore<TRes> {
+  _CopyWithImpl$Mutation$ApproveChore$approveChore(
+    this._instance,
+    this._then,
+  );
+
+  final Mutation$ApproveChore$approveChore _instance;
+
+  final TRes Function(Mutation$ApproveChore$approveChore) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? assignment = _undefined,
+    Object? lootDrop = _undefined,
+    Object? questBonus = _undefined,
+    Object? quest = _undefined,
+    Object? user = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Mutation$ApproveChore$approveChore(
+        assignment: assignment == _undefined || assignment == null
+            ? _instance.assignment
+            : (assignment as Fragment$AssignmentFields),
+        lootDrop: lootDrop == _undefined
+            ? _instance.lootDrop
+            : (lootDrop as Fragment$LootDropFields?),
+        questBonus: questBonus == _undefined
+            ? _instance.questBonus
+            : (questBonus as Fragment$LootDropFields?),
+        quest: quest == _undefined || quest == null
+            ? _instance.quest
+            : (quest as Fragment$DailyQuestFields),
+        user: user == _undefined || user == null
+            ? _instance.user
+            : (user as Fragment$UserFields),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+
+  CopyWith$Fragment$AssignmentFields<TRes> get assignment {
+    final local$assignment = _instance.assignment;
+    return CopyWith$Fragment$AssignmentFields(
+        local$assignment, (e) => call(assignment: e));
+  }
+
+  CopyWith$Fragment$LootDropFields<TRes> get lootDrop {
+    final local$lootDrop = _instance.lootDrop;
+    return local$lootDrop == null
+        ? CopyWith$Fragment$LootDropFields.stub(_then(_instance))
+        : CopyWith$Fragment$LootDropFields(
+            local$lootDrop, (e) => call(lootDrop: e));
+  }
+
+  CopyWith$Fragment$LootDropFields<TRes> get questBonus {
+    final local$questBonus = _instance.questBonus;
+    return local$questBonus == null
+        ? CopyWith$Fragment$LootDropFields.stub(_then(_instance))
+        : CopyWith$Fragment$LootDropFields(
+            local$questBonus, (e) => call(questBonus: e));
+  }
+
+  CopyWith$Fragment$DailyQuestFields<TRes> get quest {
+    final local$quest = _instance.quest;
+    return CopyWith$Fragment$DailyQuestFields(
+        local$quest, (e) => call(quest: e));
+  }
+
+  CopyWith$Fragment$UserFields<TRes> get user {
+    final local$user = _instance.user;
+    return CopyWith$Fragment$UserFields(local$user, (e) => call(user: e));
+  }
+}
+
+class _CopyWithStubImpl$Mutation$ApproveChore$approveChore<TRes>
+    implements CopyWith$Mutation$ApproveChore$approveChore<TRes> {
+  _CopyWithStubImpl$Mutation$ApproveChore$approveChore(this._res);
+
+  TRes _res;
+
+  call({
+    Fragment$AssignmentFields? assignment,
+    Fragment$LootDropFields? lootDrop,
+    Fragment$LootDropFields? questBonus,
+    Fragment$DailyQuestFields? quest,
+    Fragment$UserFields? user,
+    String? $__typename,
+  }) =>
+      _res;
+
+  CopyWith$Fragment$AssignmentFields<TRes> get assignment =>
+      CopyWith$Fragment$AssignmentFields.stub(_res);
+
+  CopyWith$Fragment$LootDropFields<TRes> get lootDrop =>
+      CopyWith$Fragment$LootDropFields.stub(_res);
+
+  CopyWith$Fragment$LootDropFields<TRes> get questBonus =>
+      CopyWith$Fragment$LootDropFields.stub(_res);
+
+  CopyWith$Fragment$DailyQuestFields<TRes> get quest =>
+      CopyWith$Fragment$DailyQuestFields.stub(_res);
+
+  CopyWith$Fragment$UserFields<TRes> get user =>
+      CopyWith$Fragment$UserFields.stub(_res);
+}
 
 class Variables$Mutation$RejectChore {
   factory Variables$Mutation$RejectChore({

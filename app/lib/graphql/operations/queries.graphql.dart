@@ -2669,3 +2669,486 @@ const documentNodeQueryLeaderboard = DocumentNode(definitions: [
   ),
   fragmentDefinitionUserFields,
 ]);
+
+class Query$TodayQuest {
+  Query$TodayQuest({
+    required this.todayQuest,
+    this.$__typename = 'Query',
+  });
+
+  factory Query$TodayQuest.fromJson(Map<String, dynamic> json) {
+    final l$todayQuest = json['todayQuest'];
+    final l$$__typename = json['__typename'];
+    return Query$TodayQuest(
+      todayQuest: Fragment$DailyQuestFields.fromJson(
+          (l$todayQuest as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Fragment$DailyQuestFields todayQuest;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$todayQuest = todayQuest;
+    _resultData['todayQuest'] = l$todayQuest.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$todayQuest = todayQuest;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$todayQuest,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Query$TodayQuest) || runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$todayQuest = todayQuest;
+    final lOther$todayQuest = other.todayQuest;
+    if (l$todayQuest != lOther$todayQuest) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$TodayQuest on Query$TodayQuest {
+  CopyWith$Query$TodayQuest<Query$TodayQuest> get copyWith =>
+      CopyWith$Query$TodayQuest(
+        this,
+        (i) => i,
+      );
+}
+
+abstract class CopyWith$Query$TodayQuest<TRes> {
+  factory CopyWith$Query$TodayQuest(
+    Query$TodayQuest instance,
+    TRes Function(Query$TodayQuest) then,
+  ) = _CopyWithImpl$Query$TodayQuest;
+
+  factory CopyWith$Query$TodayQuest.stub(TRes res) =
+      _CopyWithStubImpl$Query$TodayQuest;
+
+  TRes call({
+    Fragment$DailyQuestFields? todayQuest,
+    String? $__typename,
+  });
+  CopyWith$Fragment$DailyQuestFields<TRes> get todayQuest;
+}
+
+class _CopyWithImpl$Query$TodayQuest<TRes>
+    implements CopyWith$Query$TodayQuest<TRes> {
+  _CopyWithImpl$Query$TodayQuest(
+    this._instance,
+    this._then,
+  );
+
+  final Query$TodayQuest _instance;
+
+  final TRes Function(Query$TodayQuest) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? todayQuest = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Query$TodayQuest(
+        todayQuest: todayQuest == _undefined || todayQuest == null
+            ? _instance.todayQuest
+            : (todayQuest as Fragment$DailyQuestFields),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+
+  CopyWith$Fragment$DailyQuestFields<TRes> get todayQuest {
+    final local$todayQuest = _instance.todayQuest;
+    return CopyWith$Fragment$DailyQuestFields(
+        local$todayQuest, (e) => call(todayQuest: e));
+  }
+}
+
+class _CopyWithStubImpl$Query$TodayQuest<TRes>
+    implements CopyWith$Query$TodayQuest<TRes> {
+  _CopyWithStubImpl$Query$TodayQuest(this._res);
+
+  TRes _res;
+
+  call({
+    Fragment$DailyQuestFields? todayQuest,
+    String? $__typename,
+  }) =>
+      _res;
+
+  CopyWith$Fragment$DailyQuestFields<TRes> get todayQuest =>
+      CopyWith$Fragment$DailyQuestFields.stub(_res);
+}
+
+const documentNodeQueryTodayQuest = DocumentNode(definitions: [
+  OperationDefinitionNode(
+    type: OperationType.query,
+    name: NameNode(value: 'TodayQuest'),
+    variableDefinitions: [],
+    directives: [],
+    selectionSet: SelectionSetNode(selections: [
+      FieldNode(
+        name: NameNode(value: 'todayQuest'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FragmentSpreadNode(
+            name: NameNode(value: 'DailyQuestFields'),
+            directives: [],
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
+      ),
+      FieldNode(
+        name: NameNode(value: '__typename'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+    ]),
+  ),
+  fragmentDefinitionDailyQuestFields,
+  fragmentDefinitionLootDropFields,
+]);
+
+class Variables$Query$MyLootDrops {
+  factory Variables$Query$MyLootDrops({int? limit}) =>
+      Variables$Query$MyLootDrops._({
+        if (limit != null) r'limit': limit,
+      });
+
+  Variables$Query$MyLootDrops._(this._$data);
+
+  factory Variables$Query$MyLootDrops.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    if (data.containsKey('limit')) {
+      final l$limit = data['limit'];
+      result$data['limit'] = (l$limit as int?);
+    }
+    return Variables$Query$MyLootDrops._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  int? get limit => (_$data['limit'] as int?);
+
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    if (_$data.containsKey('limit')) {
+      final l$limit = limit;
+      result$data['limit'] = l$limit;
+    }
+    return result$data;
+  }
+
+  CopyWith$Variables$Query$MyLootDrops<Variables$Query$MyLootDrops>
+      get copyWith => CopyWith$Variables$Query$MyLootDrops(
+            this,
+            (i) => i,
+          );
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Variables$Query$MyLootDrops) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$limit = limit;
+    final lOther$limit = other.limit;
+    if (_$data.containsKey('limit') != other._$data.containsKey('limit')) {
+      return false;
+    }
+    if (l$limit != lOther$limit) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$limit = limit;
+    return Object.hashAll([_$data.containsKey('limit') ? l$limit : const {}]);
+  }
+}
+
+abstract class CopyWith$Variables$Query$MyLootDrops<TRes> {
+  factory CopyWith$Variables$Query$MyLootDrops(
+    Variables$Query$MyLootDrops instance,
+    TRes Function(Variables$Query$MyLootDrops) then,
+  ) = _CopyWithImpl$Variables$Query$MyLootDrops;
+
+  factory CopyWith$Variables$Query$MyLootDrops.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Query$MyLootDrops;
+
+  TRes call({int? limit});
+}
+
+class _CopyWithImpl$Variables$Query$MyLootDrops<TRes>
+    implements CopyWith$Variables$Query$MyLootDrops<TRes> {
+  _CopyWithImpl$Variables$Query$MyLootDrops(
+    this._instance,
+    this._then,
+  );
+
+  final Variables$Query$MyLootDrops _instance;
+
+  final TRes Function(Variables$Query$MyLootDrops) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({Object? limit = _undefined}) =>
+      _then(Variables$Query$MyLootDrops._({
+        ..._instance._$data,
+        if (limit != _undefined) 'limit': (limit as int?),
+      }));
+}
+
+class _CopyWithStubImpl$Variables$Query$MyLootDrops<TRes>
+    implements CopyWith$Variables$Query$MyLootDrops<TRes> {
+  _CopyWithStubImpl$Variables$Query$MyLootDrops(this._res);
+
+  TRes _res;
+
+  call({int? limit}) => _res;
+}
+
+class Query$MyLootDrops {
+  Query$MyLootDrops({
+    required this.myLootDrops,
+    this.$__typename = 'Query',
+  });
+
+  factory Query$MyLootDrops.fromJson(Map<String, dynamic> json) {
+    final l$myLootDrops = json['myLootDrops'];
+    final l$$__typename = json['__typename'];
+    return Query$MyLootDrops(
+      myLootDrops: (l$myLootDrops as List<dynamic>)
+          .map((e) =>
+              Fragment$LootDropFields.fromJson((e as Map<String, dynamic>)))
+          .toList(),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final List<Fragment$LootDropFields> myLootDrops;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$myLootDrops = myLootDrops;
+    _resultData['myLootDrops'] = l$myLootDrops.map((e) => e.toJson()).toList();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$myLootDrops = myLootDrops;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      Object.hashAll(l$myLootDrops.map((v) => v)),
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Query$MyLootDrops) || runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$myLootDrops = myLootDrops;
+    final lOther$myLootDrops = other.myLootDrops;
+    if (l$myLootDrops.length != lOther$myLootDrops.length) {
+      return false;
+    }
+    for (int i = 0; i < l$myLootDrops.length; i++) {
+      final l$myLootDrops$entry = l$myLootDrops[i];
+      final lOther$myLootDrops$entry = lOther$myLootDrops[i];
+      if (l$myLootDrops$entry != lOther$myLootDrops$entry) {
+        return false;
+      }
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$MyLootDrops on Query$MyLootDrops {
+  CopyWith$Query$MyLootDrops<Query$MyLootDrops> get copyWith =>
+      CopyWith$Query$MyLootDrops(
+        this,
+        (i) => i,
+      );
+}
+
+abstract class CopyWith$Query$MyLootDrops<TRes> {
+  factory CopyWith$Query$MyLootDrops(
+    Query$MyLootDrops instance,
+    TRes Function(Query$MyLootDrops) then,
+  ) = _CopyWithImpl$Query$MyLootDrops;
+
+  factory CopyWith$Query$MyLootDrops.stub(TRes res) =
+      _CopyWithStubImpl$Query$MyLootDrops;
+
+  TRes call({
+    List<Fragment$LootDropFields>? myLootDrops,
+    String? $__typename,
+  });
+  TRes myLootDrops(
+      Iterable<Fragment$LootDropFields> Function(
+              Iterable<
+                  CopyWith$Fragment$LootDropFields<Fragment$LootDropFields>>)
+          _fn);
+}
+
+class _CopyWithImpl$Query$MyLootDrops<TRes>
+    implements CopyWith$Query$MyLootDrops<TRes> {
+  _CopyWithImpl$Query$MyLootDrops(
+    this._instance,
+    this._then,
+  );
+
+  final Query$MyLootDrops _instance;
+
+  final TRes Function(Query$MyLootDrops) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? myLootDrops = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Query$MyLootDrops(
+        myLootDrops: myLootDrops == _undefined || myLootDrops == null
+            ? _instance.myLootDrops
+            : (myLootDrops as List<Fragment$LootDropFields>),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+
+  TRes myLootDrops(
+          Iterable<Fragment$LootDropFields> Function(
+                  Iterable<
+                      CopyWith$Fragment$LootDropFields<
+                          Fragment$LootDropFields>>)
+              _fn) =>
+      call(
+          myLootDrops: _fn(
+              _instance.myLootDrops.map((e) => CopyWith$Fragment$LootDropFields(
+                    e,
+                    (i) => i,
+                  ))).toList());
+}
+
+class _CopyWithStubImpl$Query$MyLootDrops<TRes>
+    implements CopyWith$Query$MyLootDrops<TRes> {
+  _CopyWithStubImpl$Query$MyLootDrops(this._res);
+
+  TRes _res;
+
+  call({
+    List<Fragment$LootDropFields>? myLootDrops,
+    String? $__typename,
+  }) =>
+      _res;
+
+  myLootDrops(_fn) => _res;
+}
+
+const documentNodeQueryMyLootDrops = DocumentNode(definitions: [
+  OperationDefinitionNode(
+    type: OperationType.query,
+    name: NameNode(value: 'MyLootDrops'),
+    variableDefinitions: [
+      VariableDefinitionNode(
+        variable: VariableNode(name: NameNode(value: 'limit')),
+        type: NamedTypeNode(
+          name: NameNode(value: 'Int'),
+          isNonNull: false,
+        ),
+        defaultValue: DefaultValueNode(value: IntValueNode(value: '50')),
+        directives: [],
+      )
+    ],
+    directives: [],
+    selectionSet: SelectionSetNode(selections: [
+      FieldNode(
+        name: NameNode(value: 'myLootDrops'),
+        alias: null,
+        arguments: [
+          ArgumentNode(
+            name: NameNode(value: 'limit'),
+            value: VariableNode(name: NameNode(value: 'limit')),
+          )
+        ],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FragmentSpreadNode(
+            name: NameNode(value: 'LootDropFields'),
+            directives: [],
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ]),
+      ),
+      FieldNode(
+        name: NameNode(value: '__typename'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+    ]),
+  ),
+  fragmentDefinitionLootDropFields,
+]);

@@ -38,3 +38,11 @@ query PendingApprovals {
 query Leaderboard {
   leaderboard { ...UserFields }
 }
+
+query TodayQuest {
+  todayQuest { ...DailyQuestFields }
+}
+
+query MyLootDrops($limit: Int = 50) {
+  myLootDrops(limit: $limit) { ...LootDropFields }
+}

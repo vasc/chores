@@ -10,6 +10,11 @@ class Fragment$UserFields {
     required this.role,
     required this.avatarEmoji,
     required this.tokenBalance,
+    required this.xp,
+    required this.level,
+    required this.xpIntoLevel,
+    required this.xpForNextLevel,
+    required this.streakDays,
     this.email,
     this.$__typename = 'User',
   });
@@ -21,6 +26,11 @@ class Fragment$UserFields {
     final l$role = json['role'];
     final l$avatarEmoji = json['avatarEmoji'];
     final l$tokenBalance = json['tokenBalance'];
+    final l$xp = json['xp'];
+    final l$level = json['level'];
+    final l$xpIntoLevel = json['xpIntoLevel'];
+    final l$xpForNextLevel = json['xpForNextLevel'];
+    final l$streakDays = json['streakDays'];
     final l$email = json['email'];
     final l$$__typename = json['__typename'];
     return Fragment$UserFields(
@@ -30,6 +40,11 @@ class Fragment$UserFields {
       role: fromJson$Enum$Role((l$role as String)),
       avatarEmoji: (l$avatarEmoji as String),
       tokenBalance: (l$tokenBalance as int),
+      xp: (l$xp as int),
+      level: (l$level as int),
+      xpIntoLevel: (l$xpIntoLevel as int),
+      xpForNextLevel: (l$xpForNextLevel as int),
+      streakDays: (l$streakDays as int),
       email: (l$email as String?),
       $__typename: (l$$__typename as String),
     );
@@ -46,6 +61,16 @@ class Fragment$UserFields {
   final String avatarEmoji;
 
   final int tokenBalance;
+
+  final int xp;
+
+  final int level;
+
+  final int xpIntoLevel;
+
+  final int xpForNextLevel;
+
+  final int streakDays;
 
   final String? email;
 
@@ -65,6 +90,16 @@ class Fragment$UserFields {
     _resultData['avatarEmoji'] = l$avatarEmoji;
     final l$tokenBalance = tokenBalance;
     _resultData['tokenBalance'] = l$tokenBalance;
+    final l$xp = xp;
+    _resultData['xp'] = l$xp;
+    final l$level = level;
+    _resultData['level'] = l$level;
+    final l$xpIntoLevel = xpIntoLevel;
+    _resultData['xpIntoLevel'] = l$xpIntoLevel;
+    final l$xpForNextLevel = xpForNextLevel;
+    _resultData['xpForNextLevel'] = l$xpForNextLevel;
+    final l$streakDays = streakDays;
+    _resultData['streakDays'] = l$streakDays;
     final l$email = email;
     _resultData['email'] = l$email;
     final l$$__typename = $__typename;
@@ -80,6 +115,11 @@ class Fragment$UserFields {
     final l$role = role;
     final l$avatarEmoji = avatarEmoji;
     final l$tokenBalance = tokenBalance;
+    final l$xp = xp;
+    final l$level = level;
+    final l$xpIntoLevel = xpIntoLevel;
+    final l$xpForNextLevel = xpForNextLevel;
+    final l$streakDays = streakDays;
     final l$email = email;
     final l$$__typename = $__typename;
     return Object.hashAll([
@@ -89,6 +129,11 @@ class Fragment$UserFields {
       l$role,
       l$avatarEmoji,
       l$tokenBalance,
+      l$xp,
+      l$level,
+      l$xpIntoLevel,
+      l$xpForNextLevel,
+      l$streakDays,
       l$email,
       l$$__typename,
     ]);
@@ -132,6 +177,31 @@ class Fragment$UserFields {
     if (l$tokenBalance != lOther$tokenBalance) {
       return false;
     }
+    final l$xp = xp;
+    final lOther$xp = other.xp;
+    if (l$xp != lOther$xp) {
+      return false;
+    }
+    final l$level = level;
+    final lOther$level = other.level;
+    if (l$level != lOther$level) {
+      return false;
+    }
+    final l$xpIntoLevel = xpIntoLevel;
+    final lOther$xpIntoLevel = other.xpIntoLevel;
+    if (l$xpIntoLevel != lOther$xpIntoLevel) {
+      return false;
+    }
+    final l$xpForNextLevel = xpForNextLevel;
+    final lOther$xpForNextLevel = other.xpForNextLevel;
+    if (l$xpForNextLevel != lOther$xpForNextLevel) {
+      return false;
+    }
+    final l$streakDays = streakDays;
+    final lOther$streakDays = other.streakDays;
+    if (l$streakDays != lOther$streakDays) {
+      return false;
+    }
     final l$email = email;
     final lOther$email = other.email;
     if (l$email != lOther$email) {
@@ -170,6 +240,11 @@ abstract class CopyWith$Fragment$UserFields<TRes> {
     Enum$Role? role,
     String? avatarEmoji,
     int? tokenBalance,
+    int? xp,
+    int? level,
+    int? xpIntoLevel,
+    int? xpForNextLevel,
+    int? streakDays,
     String? email,
     String? $__typename,
   });
@@ -195,6 +270,11 @@ class _CopyWithImpl$Fragment$UserFields<TRes>
     Object? role = _undefined,
     Object? avatarEmoji = _undefined,
     Object? tokenBalance = _undefined,
+    Object? xp = _undefined,
+    Object? level = _undefined,
+    Object? xpIntoLevel = _undefined,
+    Object? xpForNextLevel = _undefined,
+    Object? streakDays = _undefined,
     Object? email = _undefined,
     Object? $__typename = _undefined,
   }) =>
@@ -215,6 +295,19 @@ class _CopyWithImpl$Fragment$UserFields<TRes>
         tokenBalance: tokenBalance == _undefined || tokenBalance == null
             ? _instance.tokenBalance
             : (tokenBalance as int),
+        xp: xp == _undefined || xp == null ? _instance.xp : (xp as int),
+        level: level == _undefined || level == null
+            ? _instance.level
+            : (level as int),
+        xpIntoLevel: xpIntoLevel == _undefined || xpIntoLevel == null
+            ? _instance.xpIntoLevel
+            : (xpIntoLevel as int),
+        xpForNextLevel: xpForNextLevel == _undefined || xpForNextLevel == null
+            ? _instance.xpForNextLevel
+            : (xpForNextLevel as int),
+        streakDays: streakDays == _undefined || streakDays == null
+            ? _instance.streakDays
+            : (streakDays as int),
         email: email == _undefined ? _instance.email : (email as String?),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
@@ -235,6 +328,11 @@ class _CopyWithStubImpl$Fragment$UserFields<TRes>
     Enum$Role? role,
     String? avatarEmoji,
     int? tokenBalance,
+    int? xp,
+    int? level,
+    int? xpIntoLevel,
+    int? xpForNextLevel,
+    int? streakDays,
     String? email,
     String? $__typename,
   }) =>
@@ -293,6 +391,41 @@ const fragmentDefinitionUserFields = FragmentDefinitionNode(
       selectionSet: null,
     ),
     FieldNode(
+      name: NameNode(value: 'xp'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'level'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'xpIntoLevel'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'xpForNextLevel'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'streakDays'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
       name: NameNode(value: 'email'),
       alias: null,
       arguments: [],
@@ -318,6 +451,7 @@ class Fragment$ChoreFields {
     required this.title,
     this.description,
     required this.tokenValue,
+    required this.xpValue,
     required this.recurrence,
     required this.archived,
     required this.createdAt,
@@ -329,6 +463,7 @@ class Fragment$ChoreFields {
     final l$title = json['title'];
     final l$description = json['description'];
     final l$tokenValue = json['tokenValue'];
+    final l$xpValue = json['xpValue'];
     final l$recurrence = json['recurrence'];
     final l$archived = json['archived'];
     final l$createdAt = json['createdAt'];
@@ -338,6 +473,7 @@ class Fragment$ChoreFields {
       title: (l$title as String),
       description: (l$description as String?),
       tokenValue: (l$tokenValue as int),
+      xpValue: (l$xpValue as int),
       recurrence: fromJson$Enum$Recurrence((l$recurrence as String)),
       archived: (l$archived as bool),
       createdAt: parseDateTime(l$createdAt),
@@ -352,6 +488,8 @@ class Fragment$ChoreFields {
   final String? description;
 
   final int tokenValue;
+
+  final int xpValue;
 
   final Enum$Recurrence recurrence;
 
@@ -371,6 +509,8 @@ class Fragment$ChoreFields {
     _resultData['description'] = l$description;
     final l$tokenValue = tokenValue;
     _resultData['tokenValue'] = l$tokenValue;
+    final l$xpValue = xpValue;
+    _resultData['xpValue'] = l$xpValue;
     final l$recurrence = recurrence;
     _resultData['recurrence'] = toJson$Enum$Recurrence(l$recurrence);
     final l$archived = archived;
@@ -388,6 +528,7 @@ class Fragment$ChoreFields {
     final l$title = title;
     final l$description = description;
     final l$tokenValue = tokenValue;
+    final l$xpValue = xpValue;
     final l$recurrence = recurrence;
     final l$archived = archived;
     final l$createdAt = createdAt;
@@ -397,6 +538,7 @@ class Fragment$ChoreFields {
       l$title,
       l$description,
       l$tokenValue,
+      l$xpValue,
       l$recurrence,
       l$archived,
       l$createdAt,
@@ -430,6 +572,11 @@ class Fragment$ChoreFields {
     final l$tokenValue = tokenValue;
     final lOther$tokenValue = other.tokenValue;
     if (l$tokenValue != lOther$tokenValue) {
+      return false;
+    }
+    final l$xpValue = xpValue;
+    final lOther$xpValue = other.xpValue;
+    if (l$xpValue != lOther$xpValue) {
       return false;
     }
     final l$recurrence = recurrence;
@@ -478,6 +625,7 @@ abstract class CopyWith$Fragment$ChoreFields<TRes> {
     String? title,
     String? description,
     int? tokenValue,
+    int? xpValue,
     Enum$Recurrence? recurrence,
     bool? archived,
     DateTime? createdAt,
@@ -503,6 +651,7 @@ class _CopyWithImpl$Fragment$ChoreFields<TRes>
     Object? title = _undefined,
     Object? description = _undefined,
     Object? tokenValue = _undefined,
+    Object? xpValue = _undefined,
     Object? recurrence = _undefined,
     Object? archived = _undefined,
     Object? createdAt = _undefined,
@@ -519,6 +668,9 @@ class _CopyWithImpl$Fragment$ChoreFields<TRes>
         tokenValue: tokenValue == _undefined || tokenValue == null
             ? _instance.tokenValue
             : (tokenValue as int),
+        xpValue: xpValue == _undefined || xpValue == null
+            ? _instance.xpValue
+            : (xpValue as int),
         recurrence: recurrence == _undefined || recurrence == null
             ? _instance.recurrence
             : (recurrence as Enum$Recurrence),
@@ -545,6 +697,7 @@ class _CopyWithStubImpl$Fragment$ChoreFields<TRes>
     String? title,
     String? description,
     int? tokenValue,
+    int? xpValue,
     Enum$Recurrence? recurrence,
     bool? archived,
     DateTime? createdAt,
@@ -585,6 +738,13 @@ const fragmentDefinitionChoreFields = FragmentDefinitionNode(
     ),
     FieldNode(
       name: NameNode(value: 'tokenValue'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'xpValue'),
       alias: null,
       arguments: [],
       directives: [],
@@ -633,6 +793,7 @@ class Fragment$AssignmentFields {
     this.approvedAt,
     this.rejectReason,
     required this.createdAt,
+    required this.combo,
     required this.chore,
     required this.assignedTo,
     this.$__typename = 'ChoreAssignment',
@@ -646,6 +807,7 @@ class Fragment$AssignmentFields {
     final l$approvedAt = json['approvedAt'];
     final l$rejectReason = json['rejectReason'];
     final l$createdAt = json['createdAt'];
+    final l$combo = json['combo'];
     final l$chore = json['chore'];
     final l$assignedTo = json['assignedTo'];
     final l$$__typename = json['__typename'];
@@ -657,6 +819,7 @@ class Fragment$AssignmentFields {
       approvedAt: l$approvedAt == null ? null : parseDateTime(l$approvedAt),
       rejectReason: (l$rejectReason as String?),
       createdAt: parseDateTime(l$createdAt),
+      combo: (l$combo as int),
       chore: Fragment$ChoreFields.fromJson((l$chore as Map<String, dynamic>)),
       assignedTo:
           Fragment$UserFields.fromJson((l$assignedTo as Map<String, dynamic>)),
@@ -677,6 +840,8 @@ class Fragment$AssignmentFields {
   final String? rejectReason;
 
   final DateTime createdAt;
+
+  final int combo;
 
   final Fragment$ChoreFields chore;
 
@@ -703,6 +868,8 @@ class Fragment$AssignmentFields {
     _resultData['rejectReason'] = l$rejectReason;
     final l$createdAt = createdAt;
     _resultData['createdAt'] = dateTimeToIso(l$createdAt);
+    final l$combo = combo;
+    _resultData['combo'] = l$combo;
     final l$chore = chore;
     _resultData['chore'] = l$chore.toJson();
     final l$assignedTo = assignedTo;
@@ -721,6 +888,7 @@ class Fragment$AssignmentFields {
     final l$approvedAt = approvedAt;
     final l$rejectReason = rejectReason;
     final l$createdAt = createdAt;
+    final l$combo = combo;
     final l$chore = chore;
     final l$assignedTo = assignedTo;
     final l$$__typename = $__typename;
@@ -732,6 +900,7 @@ class Fragment$AssignmentFields {
       l$approvedAt,
       l$rejectReason,
       l$createdAt,
+      l$combo,
       l$chore,
       l$assignedTo,
       l$$__typename,
@@ -782,6 +951,11 @@ class Fragment$AssignmentFields {
     if (l$createdAt != lOther$createdAt) {
       return false;
     }
+    final l$combo = combo;
+    final lOther$combo = other.combo;
+    if (l$combo != lOther$combo) {
+      return false;
+    }
     final l$chore = chore;
     final lOther$chore = other.chore;
     if (l$chore != lOther$chore) {
@@ -827,6 +1001,7 @@ abstract class CopyWith$Fragment$AssignmentFields<TRes> {
     DateTime? approvedAt,
     String? rejectReason,
     DateTime? createdAt,
+    int? combo,
     Fragment$ChoreFields? chore,
     Fragment$UserFields? assignedTo,
     String? $__typename,
@@ -856,6 +1031,7 @@ class _CopyWithImpl$Fragment$AssignmentFields<TRes>
     Object? approvedAt = _undefined,
     Object? rejectReason = _undefined,
     Object? createdAt = _undefined,
+    Object? combo = _undefined,
     Object? chore = _undefined,
     Object? assignedTo = _undefined,
     Object? $__typename = _undefined,
@@ -879,6 +1055,9 @@ class _CopyWithImpl$Fragment$AssignmentFields<TRes>
         createdAt: createdAt == _undefined || createdAt == null
             ? _instance.createdAt
             : (createdAt as DateTime),
+        combo: combo == _undefined || combo == null
+            ? _instance.combo
+            : (combo as int),
         chore: chore == _undefined || chore == null
             ? _instance.chore
             : (chore as Fragment$ChoreFields),
@@ -916,6 +1095,7 @@ class _CopyWithStubImpl$Fragment$AssignmentFields<TRes>
     DateTime? approvedAt,
     String? rejectReason,
     DateTime? createdAt,
+    int? combo,
     Fragment$ChoreFields? chore,
     Fragment$UserFields? assignedTo,
     String? $__typename,
@@ -982,6 +1162,13 @@ const fragmentDefinitionAssignmentFields = FragmentDefinitionNode(
     ),
     FieldNode(
       name: NameNode(value: 'createdAt'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'combo'),
       alias: null,
       arguments: [],
       directives: [],
@@ -1710,4 +1897,716 @@ const documentNodeFragmentRedemptionFields = DocumentNode(definitions: [
   fragmentDefinitionRedemptionFields,
   fragmentDefinitionRewardFields,
   fragmentDefinitionUserFields,
+]);
+
+class Fragment$LootDropFields {
+  Fragment$LootDropFields({
+    required this.id,
+    required this.rarity,
+    required this.status,
+    required this.isQuestBonus,
+    required this.itemEmoji,
+    required this.itemLabel,
+    required this.itemDescription,
+    required this.createdAt,
+    this.committedAt,
+    this.assignmentId,
+    this.$__typename = 'LootDrop',
+  });
+
+  factory Fragment$LootDropFields.fromJson(Map<String, dynamic> json) {
+    final l$id = json['id'];
+    final l$rarity = json['rarity'];
+    final l$status = json['status'];
+    final l$isQuestBonus = json['isQuestBonus'];
+    final l$itemEmoji = json['itemEmoji'];
+    final l$itemLabel = json['itemLabel'];
+    final l$itemDescription = json['itemDescription'];
+    final l$createdAt = json['createdAt'];
+    final l$committedAt = json['committedAt'];
+    final l$assignmentId = json['assignmentId'];
+    final l$$__typename = json['__typename'];
+    return Fragment$LootDropFields(
+      id: (l$id as String),
+      rarity: fromJson$Enum$LootRarity((l$rarity as String)),
+      status: fromJson$Enum$LootDropStatus((l$status as String)),
+      isQuestBonus: (l$isQuestBonus as bool),
+      itemEmoji: (l$itemEmoji as String),
+      itemLabel: (l$itemLabel as String),
+      itemDescription: (l$itemDescription as String),
+      createdAt: parseDateTime(l$createdAt),
+      committedAt: l$committedAt == null ? null : parseDateTime(l$committedAt),
+      assignmentId: (l$assignmentId as String?),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final String id;
+
+  final Enum$LootRarity rarity;
+
+  final Enum$LootDropStatus status;
+
+  final bool isQuestBonus;
+
+  final String itemEmoji;
+
+  final String itemLabel;
+
+  final String itemDescription;
+
+  final DateTime createdAt;
+
+  final DateTime? committedAt;
+
+  final String? assignmentId;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
+    final l$rarity = rarity;
+    _resultData['rarity'] = toJson$Enum$LootRarity(l$rarity);
+    final l$status = status;
+    _resultData['status'] = toJson$Enum$LootDropStatus(l$status);
+    final l$isQuestBonus = isQuestBonus;
+    _resultData['isQuestBonus'] = l$isQuestBonus;
+    final l$itemEmoji = itemEmoji;
+    _resultData['itemEmoji'] = l$itemEmoji;
+    final l$itemLabel = itemLabel;
+    _resultData['itemLabel'] = l$itemLabel;
+    final l$itemDescription = itemDescription;
+    _resultData['itemDescription'] = l$itemDescription;
+    final l$createdAt = createdAt;
+    _resultData['createdAt'] = dateTimeToIso(l$createdAt);
+    final l$committedAt = committedAt;
+    _resultData['committedAt'] =
+        l$committedAt == null ? null : dateTimeToIso(l$committedAt);
+    final l$assignmentId = assignmentId;
+    _resultData['assignmentId'] = l$assignmentId;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    final l$rarity = rarity;
+    final l$status = status;
+    final l$isQuestBonus = isQuestBonus;
+    final l$itemEmoji = itemEmoji;
+    final l$itemLabel = itemLabel;
+    final l$itemDescription = itemDescription;
+    final l$createdAt = createdAt;
+    final l$committedAt = committedAt;
+    final l$assignmentId = assignmentId;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$id,
+      l$rarity,
+      l$status,
+      l$isQuestBonus,
+      l$itemEmoji,
+      l$itemLabel,
+      l$itemDescription,
+      l$createdAt,
+      l$committedAt,
+      l$assignmentId,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Fragment$LootDropFields) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    final l$rarity = rarity;
+    final lOther$rarity = other.rarity;
+    if (l$rarity != lOther$rarity) {
+      return false;
+    }
+    final l$status = status;
+    final lOther$status = other.status;
+    if (l$status != lOther$status) {
+      return false;
+    }
+    final l$isQuestBonus = isQuestBonus;
+    final lOther$isQuestBonus = other.isQuestBonus;
+    if (l$isQuestBonus != lOther$isQuestBonus) {
+      return false;
+    }
+    final l$itemEmoji = itemEmoji;
+    final lOther$itemEmoji = other.itemEmoji;
+    if (l$itemEmoji != lOther$itemEmoji) {
+      return false;
+    }
+    final l$itemLabel = itemLabel;
+    final lOther$itemLabel = other.itemLabel;
+    if (l$itemLabel != lOther$itemLabel) {
+      return false;
+    }
+    final l$itemDescription = itemDescription;
+    final lOther$itemDescription = other.itemDescription;
+    if (l$itemDescription != lOther$itemDescription) {
+      return false;
+    }
+    final l$createdAt = createdAt;
+    final lOther$createdAt = other.createdAt;
+    if (l$createdAt != lOther$createdAt) {
+      return false;
+    }
+    final l$committedAt = committedAt;
+    final lOther$committedAt = other.committedAt;
+    if (l$committedAt != lOther$committedAt) {
+      return false;
+    }
+    final l$assignmentId = assignmentId;
+    final lOther$assignmentId = other.assignmentId;
+    if (l$assignmentId != lOther$assignmentId) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Fragment$LootDropFields on Fragment$LootDropFields {
+  CopyWith$Fragment$LootDropFields<Fragment$LootDropFields> get copyWith =>
+      CopyWith$Fragment$LootDropFields(
+        this,
+        (i) => i,
+      );
+}
+
+abstract class CopyWith$Fragment$LootDropFields<TRes> {
+  factory CopyWith$Fragment$LootDropFields(
+    Fragment$LootDropFields instance,
+    TRes Function(Fragment$LootDropFields) then,
+  ) = _CopyWithImpl$Fragment$LootDropFields;
+
+  factory CopyWith$Fragment$LootDropFields.stub(TRes res) =
+      _CopyWithStubImpl$Fragment$LootDropFields;
+
+  TRes call({
+    String? id,
+    Enum$LootRarity? rarity,
+    Enum$LootDropStatus? status,
+    bool? isQuestBonus,
+    String? itemEmoji,
+    String? itemLabel,
+    String? itemDescription,
+    DateTime? createdAt,
+    DateTime? committedAt,
+    String? assignmentId,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Fragment$LootDropFields<TRes>
+    implements CopyWith$Fragment$LootDropFields<TRes> {
+  _CopyWithImpl$Fragment$LootDropFields(
+    this._instance,
+    this._then,
+  );
+
+  final Fragment$LootDropFields _instance;
+
+  final TRes Function(Fragment$LootDropFields) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? id = _undefined,
+    Object? rarity = _undefined,
+    Object? status = _undefined,
+    Object? isQuestBonus = _undefined,
+    Object? itemEmoji = _undefined,
+    Object? itemLabel = _undefined,
+    Object? itemDescription = _undefined,
+    Object? createdAt = _undefined,
+    Object? committedAt = _undefined,
+    Object? assignmentId = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Fragment$LootDropFields(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
+        rarity: rarity == _undefined || rarity == null
+            ? _instance.rarity
+            : (rarity as Enum$LootRarity),
+        status: status == _undefined || status == null
+            ? _instance.status
+            : (status as Enum$LootDropStatus),
+        isQuestBonus: isQuestBonus == _undefined || isQuestBonus == null
+            ? _instance.isQuestBonus
+            : (isQuestBonus as bool),
+        itemEmoji: itemEmoji == _undefined || itemEmoji == null
+            ? _instance.itemEmoji
+            : (itemEmoji as String),
+        itemLabel: itemLabel == _undefined || itemLabel == null
+            ? _instance.itemLabel
+            : (itemLabel as String),
+        itemDescription:
+            itemDescription == _undefined || itemDescription == null
+                ? _instance.itemDescription
+                : (itemDescription as String),
+        createdAt: createdAt == _undefined || createdAt == null
+            ? _instance.createdAt
+            : (createdAt as DateTime),
+        committedAt: committedAt == _undefined
+            ? _instance.committedAt
+            : (committedAt as DateTime?),
+        assignmentId: assignmentId == _undefined
+            ? _instance.assignmentId
+            : (assignmentId as String?),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Fragment$LootDropFields<TRes>
+    implements CopyWith$Fragment$LootDropFields<TRes> {
+  _CopyWithStubImpl$Fragment$LootDropFields(this._res);
+
+  TRes _res;
+
+  call({
+    String? id,
+    Enum$LootRarity? rarity,
+    Enum$LootDropStatus? status,
+    bool? isQuestBonus,
+    String? itemEmoji,
+    String? itemLabel,
+    String? itemDescription,
+    DateTime? createdAt,
+    DateTime? committedAt,
+    String? assignmentId,
+    String? $__typename,
+  }) =>
+      _res;
+}
+
+const fragmentDefinitionLootDropFields = FragmentDefinitionNode(
+  name: NameNode(value: 'LootDropFields'),
+  typeCondition: TypeConditionNode(
+      on: NamedTypeNode(
+    name: NameNode(value: 'LootDrop'),
+    isNonNull: false,
+  )),
+  directives: [],
+  selectionSet: SelectionSetNode(selections: [
+    FieldNode(
+      name: NameNode(value: 'id'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'rarity'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'status'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'isQuestBonus'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'itemEmoji'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'itemLabel'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'itemDescription'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'createdAt'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'committedAt'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'assignmentId'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: '__typename'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+  ]),
+);
+const documentNodeFragmentLootDropFields = DocumentNode(definitions: [
+  fragmentDefinitionLootDropFields,
+]);
+
+class Fragment$DailyQuestFields {
+  Fragment$DailyQuestFields({
+    required this.id,
+    required this.questDate,
+    required this.goal,
+    required this.progress,
+    this.rewardClaimedAt,
+    this.rewardDrop,
+    this.$__typename = 'DailyQuest',
+  });
+
+  factory Fragment$DailyQuestFields.fromJson(Map<String, dynamic> json) {
+    final l$id = json['id'];
+    final l$questDate = json['questDate'];
+    final l$goal = json['goal'];
+    final l$progress = json['progress'];
+    final l$rewardClaimedAt = json['rewardClaimedAt'];
+    final l$rewardDrop = json['rewardDrop'];
+    final l$$__typename = json['__typename'];
+    return Fragment$DailyQuestFields(
+      id: (l$id as String),
+      questDate: parseDateTime(l$questDate),
+      goal: (l$goal as int),
+      progress: (l$progress as int),
+      rewardClaimedAt:
+          l$rewardClaimedAt == null ? null : parseDateTime(l$rewardClaimedAt),
+      rewardDrop: l$rewardDrop == null
+          ? null
+          : Fragment$LootDropFields.fromJson(
+              (l$rewardDrop as Map<String, dynamic>)),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final String id;
+
+  final DateTime questDate;
+
+  final int goal;
+
+  final int progress;
+
+  final DateTime? rewardClaimedAt;
+
+  final Fragment$LootDropFields? rewardDrop;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
+    final l$questDate = questDate;
+    _resultData['questDate'] = dateTimeToIso(l$questDate);
+    final l$goal = goal;
+    _resultData['goal'] = l$goal;
+    final l$progress = progress;
+    _resultData['progress'] = l$progress;
+    final l$rewardClaimedAt = rewardClaimedAt;
+    _resultData['rewardClaimedAt'] =
+        l$rewardClaimedAt == null ? null : dateTimeToIso(l$rewardClaimedAt);
+    final l$rewardDrop = rewardDrop;
+    _resultData['rewardDrop'] = l$rewardDrop?.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    final l$questDate = questDate;
+    final l$goal = goal;
+    final l$progress = progress;
+    final l$rewardClaimedAt = rewardClaimedAt;
+    final l$rewardDrop = rewardDrop;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$id,
+      l$questDate,
+      l$goal,
+      l$progress,
+      l$rewardClaimedAt,
+      l$rewardDrop,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (!(other is Fragment$DailyQuestFields) ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    final l$questDate = questDate;
+    final lOther$questDate = other.questDate;
+    if (l$questDate != lOther$questDate) {
+      return false;
+    }
+    final l$goal = goal;
+    final lOther$goal = other.goal;
+    if (l$goal != lOther$goal) {
+      return false;
+    }
+    final l$progress = progress;
+    final lOther$progress = other.progress;
+    if (l$progress != lOther$progress) {
+      return false;
+    }
+    final l$rewardClaimedAt = rewardClaimedAt;
+    final lOther$rewardClaimedAt = other.rewardClaimedAt;
+    if (l$rewardClaimedAt != lOther$rewardClaimedAt) {
+      return false;
+    }
+    final l$rewardDrop = rewardDrop;
+    final lOther$rewardDrop = other.rewardDrop;
+    if (l$rewardDrop != lOther$rewardDrop) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Fragment$DailyQuestFields
+    on Fragment$DailyQuestFields {
+  CopyWith$Fragment$DailyQuestFields<Fragment$DailyQuestFields> get copyWith =>
+      CopyWith$Fragment$DailyQuestFields(
+        this,
+        (i) => i,
+      );
+}
+
+abstract class CopyWith$Fragment$DailyQuestFields<TRes> {
+  factory CopyWith$Fragment$DailyQuestFields(
+    Fragment$DailyQuestFields instance,
+    TRes Function(Fragment$DailyQuestFields) then,
+  ) = _CopyWithImpl$Fragment$DailyQuestFields;
+
+  factory CopyWith$Fragment$DailyQuestFields.stub(TRes res) =
+      _CopyWithStubImpl$Fragment$DailyQuestFields;
+
+  TRes call({
+    String? id,
+    DateTime? questDate,
+    int? goal,
+    int? progress,
+    DateTime? rewardClaimedAt,
+    Fragment$LootDropFields? rewardDrop,
+    String? $__typename,
+  });
+  CopyWith$Fragment$LootDropFields<TRes> get rewardDrop;
+}
+
+class _CopyWithImpl$Fragment$DailyQuestFields<TRes>
+    implements CopyWith$Fragment$DailyQuestFields<TRes> {
+  _CopyWithImpl$Fragment$DailyQuestFields(
+    this._instance,
+    this._then,
+  );
+
+  final Fragment$DailyQuestFields _instance;
+
+  final TRes Function(Fragment$DailyQuestFields) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? id = _undefined,
+    Object? questDate = _undefined,
+    Object? goal = _undefined,
+    Object? progress = _undefined,
+    Object? rewardClaimedAt = _undefined,
+    Object? rewardDrop = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Fragment$DailyQuestFields(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
+        questDate: questDate == _undefined || questDate == null
+            ? _instance.questDate
+            : (questDate as DateTime),
+        goal:
+            goal == _undefined || goal == null ? _instance.goal : (goal as int),
+        progress: progress == _undefined || progress == null
+            ? _instance.progress
+            : (progress as int),
+        rewardClaimedAt: rewardClaimedAt == _undefined
+            ? _instance.rewardClaimedAt
+            : (rewardClaimedAt as DateTime?),
+        rewardDrop: rewardDrop == _undefined
+            ? _instance.rewardDrop
+            : (rewardDrop as Fragment$LootDropFields?),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+
+  CopyWith$Fragment$LootDropFields<TRes> get rewardDrop {
+    final local$rewardDrop = _instance.rewardDrop;
+    return local$rewardDrop == null
+        ? CopyWith$Fragment$LootDropFields.stub(_then(_instance))
+        : CopyWith$Fragment$LootDropFields(
+            local$rewardDrop, (e) => call(rewardDrop: e));
+  }
+}
+
+class _CopyWithStubImpl$Fragment$DailyQuestFields<TRes>
+    implements CopyWith$Fragment$DailyQuestFields<TRes> {
+  _CopyWithStubImpl$Fragment$DailyQuestFields(this._res);
+
+  TRes _res;
+
+  call({
+    String? id,
+    DateTime? questDate,
+    int? goal,
+    int? progress,
+    DateTime? rewardClaimedAt,
+    Fragment$LootDropFields? rewardDrop,
+    String? $__typename,
+  }) =>
+      _res;
+
+  CopyWith$Fragment$LootDropFields<TRes> get rewardDrop =>
+      CopyWith$Fragment$LootDropFields.stub(_res);
+}
+
+const fragmentDefinitionDailyQuestFields = FragmentDefinitionNode(
+  name: NameNode(value: 'DailyQuestFields'),
+  typeCondition: TypeConditionNode(
+      on: NamedTypeNode(
+    name: NameNode(value: 'DailyQuest'),
+    isNonNull: false,
+  )),
+  directives: [],
+  selectionSet: SelectionSetNode(selections: [
+    FieldNode(
+      name: NameNode(value: 'id'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'questDate'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'goal'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'progress'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'rewardClaimedAt'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+    FieldNode(
+      name: NameNode(value: 'rewardDrop'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FragmentSpreadNode(
+          name: NameNode(value: 'LootDropFields'),
+          directives: [],
+        ),
+        FieldNode(
+          name: NameNode(value: '__typename'),
+          alias: null,
+          arguments: [],
+          directives: [],
+          selectionSet: null,
+        ),
+      ]),
+    ),
+    FieldNode(
+      name: NameNode(value: '__typename'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
+  ]),
+);
+const documentNodeFragmentDailyQuestFields = DocumentNode(definitions: [
+  fragmentDefinitionDailyQuestFields,
+  fragmentDefinitionLootDropFields,
 ]);
