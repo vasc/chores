@@ -25,6 +25,18 @@ const mascotInfo = <MascotKind, MascotInfo>{
   MascotKind.rhino: MascotInfo(name: 'Remy', species: 'Rhino', color: Color(0xFF9FA3A8)),
 };
 
+const mascotToEmoji = <MascotKind, String>{
+  MascotKind.lion: '🦁',
+  MascotKind.giraffe: '🦒',
+  MascotKind.zebra: '🦓',
+  MascotKind.elephant: '🐘',
+  MascotKind.tiger: '🐯',
+  MascotKind.cheetah: '🐆',
+  MascotKind.rhino: '🦏',
+  // No meerkat emoji; use badger so we can still round-trip.
+  MascotKind.meerkat: '🦡',
+};
+
 MascotKind? mascotFromEmoji(String emoji) {
   switch (emoji) {
     case '🦁':
@@ -43,6 +55,7 @@ MascotKind? mascotFromEmoji(String emoji) {
     case '🦏':
       return MascotKind.rhino;
     case '🦝':
+    case '🦡':
       return MascotKind.meerkat;
   }
   return null;

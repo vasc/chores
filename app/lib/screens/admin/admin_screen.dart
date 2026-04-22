@@ -10,28 +10,46 @@ import '../../graphql/operations/queries.graphql.dart';
 import '../../graphql/operations/rewards.graphql.dart';
 import '../../graphql/schema.graphql.dart';
 import '../../widgets/error_box.dart';
+import '../../widgets/savanna/mascot_picker.dart';
+import '../../widgets/savanna/mascots.dart';
+import '../../widgets/savanna/parent_theme.dart';
+import 'parent_activity_tab.dart';
+import 'parent_digest_tab.dart';
+import 'parent_ledger_tab.dart';
 
 class AdminScreen extends ConsumerWidget {
   const AdminScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Admin'),
-          bottom: const TabBar(tabs: [
-            Tab(text: 'Chores', icon: Icon(Icons.checklist)),
-            Tab(text: 'Rewards', icon: Icon(Icons.card_giftcard)),
-            Tab(text: 'Members', icon: Icon(Icons.group)),
+    return ParentTheme(
+      child: DefaultTabController(
+        length: 6,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Admin'),
+            bottom: const TabBar(
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
+              tabs: [
+                Tab(text: 'Chores', icon: Icon(Icons.checklist)),
+                Tab(text: 'Rewards', icon: Icon(Icons.card_giftcard)),
+                Tab(text: 'Members', icon: Icon(Icons.group)),
+                Tab(text: 'Activity', icon: Icon(Icons.timeline)),
+                Tab(text: 'Ledger', icon: Icon(Icons.account_balance_wallet_outlined)),
+                Tab(text: 'Digest', icon: Icon(Icons.insights)),
+              ],
+            ),
+          ),
+          body: const TabBarView(children: [
+            _ChoresTab(),
+            _RewardsTab(),
+            _MembersTab(),
+            ParentActivityTab(),
+            ParentLedgerTab(),
+            ParentDigestTab(),
           ]),
         ),
-        body: const TabBarView(children: [
-          _ChoresTab(),
-          _RewardsTab(),
-          _MembersTab(),
-        ]),
       ),
     );
   }
@@ -543,7 +561,7 @@ class _AddChildFormState extends ConsumerState<_AddChildForm> {
   final _form = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _pin = TextEditingController();
-  final _emoji = TextEditingController(text: '🧒');
+  MascotKind _mascot = MascotKind.lion;
   bool _busy = false;
   String? _error;
 
@@ -558,7 +576,7 @@ class _AddChildFormState extends ConsumerState<_AddChildForm> {
           variables: Variables$Mutation$AddChild(
             name: _name.text.trim(),
             pin: _pin.text,
-            avatarEmoji: _emoji.text.trim().isEmpty ? null : _emoji.text.trim(),
+            avatarEmoji: mascotToEmoji[_mascot],
           ).toJson(),
         ));
     if (!mounted) return;
@@ -574,47 +592,62 @@ class _AddChildFormState extends ConsumerState<_AddChildForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: 16,
-        right: 16,
-        top: 16,
-      ),
-      child: Form(
-        key: _form,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Add child', style: TextStyle(fontSize: 20)),
-            if (_error != null) ErrorBox(_error!),
-            TextFormField(
-              controller: _name,
-              decoration: const InputDecoration(labelText: 'Name'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          left: 16,
+          right: 16,
+          top: 16,
+        ),
+        child: Form(
+          key: _form,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    'Add a kid',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: -0.4),
+                  ),
+                ),
+                if (_error != null) ErrorBox(_error!),
+                MascotPicker(
+                  initial: _mascot,
+                  onChanged: (k) => setState(() => _mascot = k),
+                  heroSize: 120,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _name,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                  validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _pin,
+                  decoration: const InputDecoration(labelText: '4-digit PIN'),
+                  keyboardType: TextInputType.number,
+                  maxLength: 4,
+                  obscureText: true,
+                  validator: (v) =>
+                      (v == null || v.length != 4 || int.tryParse(v) == null) ? '4 digits' : null,
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: _busy ? null : _save,
+                    child: const Text("That's my buddy!"),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
             ),
-            TextFormField(
-              controller: _pin,
-              decoration: const InputDecoration(labelText: '4-digit PIN'),
-              keyboardType: TextInputType.number,
-              maxLength: 4,
-              validator: (v) =>
-                  (v == null || v.length != 4 || int.tryParse(v) == null) ? '4 digits' : null,
-            ),
-            TextFormField(
-              controller: _emoji,
-              decoration: const InputDecoration(labelText: 'Avatar emoji'),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: _busy ? null : _save,
-                child: const Text('Add'),
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
+          ),
         ),
       ),
     );
