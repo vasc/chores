@@ -11,6 +11,7 @@ import 'screens/buddy_screen.dart';
 import 'screens/chore_detail_screen.dart';
 import 'screens/home_chores_screen.dart';
 import 'screens/kid_picker_screen.dart';
+import 'screens/lock_reminders_screen.dart';
 import 'screens/reminders_screen.dart';
 import 'screens/rewards_screen.dart';
 import 'screens/splash_screen.dart';
@@ -54,6 +55,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/admin', builder: (_, __) => const AdminScreen()),
       GoRoute(path: '/buddy', builder: (_, __) => const BuddyScreen()),
       GoRoute(path: '/reminders', builder: (_, __) => const RemindersScreen()),
+      GoRoute(path: '/lock-reminders', builder: (_, __) => const LockRemindersScreen()),
     ],
     refreshListenable: _AuthListenable(ref),
   );

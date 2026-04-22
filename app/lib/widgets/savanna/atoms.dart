@@ -337,7 +337,7 @@ class StreakPill extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(999),
         boxShadow: [
-          BoxShadow(color: tokens.accent.withValues(alpha: 0.3), offset: const Offset(0, 3), blurRadius: 10),
+          BoxShadow(color: tokens.accent.withValues(alpha: 0.31), offset: const Offset(0, 3), blurRadius: 10),
         ],
       ),
       child: Row(

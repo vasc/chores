@@ -22,8 +22,24 @@ class MascotPicker extends StatefulWidget {
   State<MascotPicker> createState() => _MascotPickerState();
 }
 
-class _MascotPickerState extends State<MascotPicker> {
+class _MascotPickerState extends State<MascotPicker> with SingleTickerProviderStateMixin {
   late MascotKind _selected = widget.initial;
+  late final AnimationController _bob;
+
+  @override
+  void initState() {
+    super.initState();
+    _bob = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2500),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _bob.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,21 +48,31 @@ class _MascotPickerState extends State<MascotPicker> {
 
     return Column(
       children: [
-        Container(
-          width: widget.heroSize + 40,
-          height: widget.heroSize + 40,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [
-                meta.color.withValues(alpha: 0.4),
-                tokens.bg.withValues(alpha: 0),
-              ],
-              stops: const [0, 0.7],
+        AnimatedBuilder(
+          animation: _bob,
+          builder: (_, child) {
+            final t = Curves.easeInOut.transform(_bob.value);
+            return Transform.translate(
+              offset: Offset(0, -6 * t),
+              child: child,
+            );
+          },
+          child: Container(
+            width: widget.heroSize + 40,
+            height: widget.heroSize + 40,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  meta.color.withValues(alpha: 0.4),
+                  tokens.bg.withValues(alpha: 0),
+                ],
+                stops: const [0, 0.7],
+              ),
             ),
+            child: Mascot(kind: _selected, size: widget.heroSize),
           ),
-          child: Mascot(kind: _selected, size: widget.heroSize),
         ),
         const SizedBox(height: 8),
         Text(
@@ -102,10 +128,15 @@ class _Tile extends StatelessWidget {
     return Material(
       color: selected ? Colors.white : Colors.white.withValues(alpha: 0.5),
       borderRadius: BorderRadius.circular(20),
+      // Design uses `box-shadow: 0 0 0 3px accent, 0 4px 12px rgba(0,0,0,0.1)`
+      // for selection. Flutter's equivalent is a colored outer ring via
+      // BoxDecoration shadow; we use a thick border + drop shadow below.
       shape: RoundedRectangleBorder(
         side: BorderSide(color: selected ? accent : Colors.transparent, width: 3),
         borderRadius: BorderRadius.circular(20),
       ),
+      elevation: selected ? 4 : 0,
+      shadowColor: const Color(0x1A000000),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: onTap,

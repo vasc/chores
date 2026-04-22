@@ -33,6 +33,7 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
   late final AnimationController _shake;
   late final AnimationController _lid;
   late final AnimationController _confetti;
+  late final AnimationController _float;
 
   @override
   void initState() {
@@ -41,6 +42,7 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
     _shake = AnimationController(vsync: this, duration: const Duration(milliseconds: 250))..repeat();
     _lid = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
     _confetti = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200));
+    _float = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat(reverse: true);
 
     Future.delayed(const Duration(milliseconds: 600), () {
       if (mounted) setState(() => _stage = _Stage.shaking);
@@ -63,6 +65,7 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
     _shake.dispose();
     _lid.dispose();
     _confetti.dispose();
+    _float.dispose();
     super.dispose();
   }
 
@@ -321,23 +324,30 @@ class _LootBoxOverlayState extends State<LootBoxOverlay> with TickerProviderStat
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          width: 140,
-          height: 140,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [p.color, p.color.withValues(alpha: 0.8)],
+        AnimatedBuilder(
+          animation: _float,
+          builder: (_, child) {
+            final t = Curves.easeInOut.transform(_float.value);
+            return Transform.translate(offset: Offset(0, -8 * t), child: child);
+          },
+          child: Container(
+            width: 140,
+            height: 140,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [p.color, p.color.withValues(alpha: 0.8)],
+              ),
+              border: Border.all(color: p.color, width: 3),
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: [
+                BoxShadow(color: p.glow, blurRadius: 60),
+              ],
             ),
-            border: Border.all(color: p.color, width: 3),
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(color: p.glow, blurRadius: 60),
-            ],
+            alignment: Alignment.center,
+            child: Text(widget.drop.itemEmoji, style: const TextStyle(fontSize: 72)),
           ),
-          alignment: Alignment.center,
-          child: Text(widget.drop.itemEmoji, style: const TextStyle(fontSize: 72)),
         ),
         const SizedBox(height: 14),
         Text(

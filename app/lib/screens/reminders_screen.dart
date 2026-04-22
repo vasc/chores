@@ -22,7 +22,16 @@ class RemindersScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tokens = context.savanna;
     return Scaffold(
-      appBar: AppBar(title: const Text('Reminders')),
+      appBar: AppBar(
+        title: const Text('Reminders'),
+        actions: [
+          IconButton(
+            tooltip: 'Preview lock screen',
+            icon: const Icon(Icons.lock_clock),
+            onPressed: () => context.push('/lock-reminders'),
+          ),
+        ],
+      ),
       body: SavannaBg(
         variant: SavannaBgVariant.plain,
         child: SafeArea(
