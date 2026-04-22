@@ -4,7 +4,10 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../auth/auth_controller.dart';
 import '../graphql/operations/auth.graphql.dart';
+import '../theme.dart';
 import '../widgets/error_box.dart';
+import '../widgets/savanna/atoms.dart';
+import '../widgets/savanna/savanna_bg.dart';
 
 class AdultSignupScreen extends ConsumerStatefulWidget {
   const AdultSignupScreen({super.key});
@@ -73,53 +76,82 @@ class _AdultSignupScreenState extends ConsumerState<AdultSignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.savanna;
     return Scaffold(
-      appBar: AppBar(title: const Text('Set up household')),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _form,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (_error != null) ErrorBox(_error!),
-                TextFormField(
-                  controller: _household,
-                  decoration: const InputDecoration(labelText: 'Household name'),
-                  validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _name,
-                  decoration: const InputDecoration(labelText: 'Your name'),
-                  validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _email,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  validator: (v) => (v == null || !v.contains('@')) ? 'Invalid email' : null,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _password,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Password (min 8 chars)'),
-                  validator: (v) => (v == null || v.length < 8) ? 'Min 8 chars' : null,
-                ),
-                const SizedBox(height: 24),
-                FilledButton(
-                  onPressed: _busy ? null : _submit,
-                  child: _busy
-                      ? const SizedBox.square(
-                          dimension: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Create household'),
-                ),
-              ],
+      appBar: AppBar(title: const Text('New household')),
+      body: SavannaBg(
+        variant: SavannaBgVariant.day,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+            child: Form(
+              key: _form,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Set up your household',
+                    style: TextStyle(
+                      fontFamily: 'Nunito',
+                      fontWeight: FontWeight.w900,
+                      fontSize: 30,
+                      color: tokens.ink,
+                      letterSpacing: -0.6,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'One adult kicks it off — you can invite more later.',
+                    style: TextStyle(
+                      fontFamily: 'Nunito',
+                      fontSize: 14,
+                      color: tokens.ink2,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  if (_error != null) Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: ErrorBox(_error!),
+                  ),
+                  TextFormField(
+                    controller: _household,
+                    decoration: const InputDecoration(labelText: 'Household name'),
+                    validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _name,
+                    decoration: const InputDecoration(labelText: 'Your name'),
+                    validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _email,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(labelText: 'Email'),
+                    validator: (v) => (v == null || !v.contains('@')) ? 'Invalid email' : null,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _password,
+                    obscureText: true,
+                    decoration: const InputDecoration(labelText: 'Password (min 8 chars)'),
+                    validator: (v) => (v == null || v.length < 8) ? 'Min 8 chars' : null,
+                  ),
+                  const SizedBox(height: 24),
+                  CuteButton(
+                    full: true,
+                    onPressed: _busy ? null : _submit,
+                    child: _busy
+                        ? const SizedBox.square(
+                            dimension: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          )
+                        : const Text('Create household'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

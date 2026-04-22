@@ -7,9 +7,11 @@ import 'screens/admin/admin_screen.dart';
 import 'screens/adult_login.dart';
 import 'screens/adult_signup.dart';
 import 'screens/approvals_screen.dart';
+import 'screens/buddy_screen.dart';
 import 'screens/chore_detail_screen.dart';
 import 'screens/home_chores_screen.dart';
 import 'screens/kid_picker_screen.dart';
+import 'screens/reminders_screen.dart';
 import 'screens/rewards_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/welcome_screen.dart';
@@ -50,6 +52,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/rewards', builder: (_, __) => const RewardsScreen()),
       GoRoute(path: '/approvals', builder: (_, __) => const ApprovalsScreen()),
       GoRoute(path: '/admin', builder: (_, __) => const AdminScreen()),
+      GoRoute(path: '/buddy', builder: (_, __) => const BuddyScreen()),
+      GoRoute(path: '/reminders', builder: (_, __) => const RemindersScreen()),
     ],
     refreshListenable: _AuthListenable(ref),
   );
